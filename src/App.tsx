@@ -2,66 +2,42 @@ import React from 'react';
 import Form from '@rjsf/mui';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RJSFSchema } from '@rjsf/utils';
+import { useSearchParams } from 'react-router-dom';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
 
 
-const schema: RJSFSchema = {
-  "$defs": {
-    "Property": {
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "attribute_type": {
-          "enum": [
-            "N",
-            "S"
-          ],
-          "title": "Attribute Type",
-          "type": "string"
-        },
-        "key_type": {
-          "default": null,
-          "enum": [
-            "HASH",
-            "RANGE",
-            null
-          ],
-          "title": "Key Type"
-        }
-      },
-      "required": [
-        "name",
-        "attribute_type"
-      ],
-      "title": "Property",
-      "type": "object"
-    }
-  },
-  "properties": {
-    "name": {
-      "title": "Name",
-      "type": "string"
+const defaultSchema: RJSFSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
     },
-    "properties": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/Property"
-      },
-      "minItems": 1,
-      "title": "Properties"
-    }
+    done: {
+      type: 'boolean',
+    },
   },
-  "required": [
-    "name",
-    "properties"
-  ],
-  "title": "TableDef",
-  "type": "object"
 }
 function MyForm() {
+  const [searchParams] = useSearchParams()
+  const [schema, setSchema] = React.useState(defaultSchema)
+
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const schemaUrl = searchParams.get("schema_url")
+      if (schemaUrl) {
+        const res = await fetch(schemaUrl)
+        const body = await res.json()
+        console.log('body', body)
+        setSchema(body)
+      } else {
+        setSchema(defaultSchema)
+      }
+    }
+    fetchData();
+  }, [searchParams]);
+
   return <Form schema={schema} validator={validator} />
 }
 
