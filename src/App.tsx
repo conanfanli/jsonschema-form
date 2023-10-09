@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from '@rjsf/mui';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RJSFSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
@@ -64,4 +65,19 @@ function MyForm() {
   return <Form schema={schema} validator={validator} />
 }
 
-export default MyForm;
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <MyForm />,
+    },
+  ],
+  { basename: "/jsonschema-form" }
+);
+
+
+function App() {
+  return <RouterProvider router={router} />;
+}
+
+export default App;
