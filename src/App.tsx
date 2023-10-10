@@ -10,11 +10,14 @@ import './App.css';
 const defaultSchema: RJSFSchema = {
   type: 'object',
   properties: {
-    title: {
+    schemaUrl: {
       type: 'string',
     },
-    done: {
-      type: 'boolean',
+    schemaDefinition: {
+      type: 'string',
+    },
+    submitUrl: {
+      type: 'string',
     },
   },
 }
