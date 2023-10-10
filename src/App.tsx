@@ -2,7 +2,6 @@ import React from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { RJSFSchema } from '@rjsf/utils';
 import { useSearchParams } from 'react-router-dom';
 import { Box, Button, TextField } from "@mui/material";
 import './App.css';
