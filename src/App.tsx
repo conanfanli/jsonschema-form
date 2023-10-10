@@ -1,9 +1,9 @@
 import React from 'react';
-import Form from '@rjsf/mui';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RJSFSchema } from '@rjsf/utils';
 import { useSearchParams } from 'react-router-dom';
-import validator from '@rjsf/validator-ajv8';
+import { Box } from "@mui/material";
+import { DebouncedTextField as Field } from "./DebouncedTextField";
 import './App.css';
 
 
@@ -21,34 +21,41 @@ const defaultSchema: RJSFSchema = {
     },
   },
 }
-function MyForm() {
+function SchemaPicker() {
   const [searchParams] = useSearchParams()
   const [schema, setSchema] = React.useState(defaultSchema)
 
+  return (
+    <Box noValidate component="form">
+      <Field name='Schema URL' onPatch={e => { }} value='' />
+    </Box>
+  )
 
-  React.useEffect(() => {
-    async function fetchData() {
-      const schemaUrl = searchParams.get("schema_url")
-      if (schemaUrl) {
-        const res = await fetch(schemaUrl)
-        const body = await res.json()
-        console.log('body', body)
-        setSchema(body)
-      } else {
-        setSchema(defaultSchema)
-      }
+  /*
+React.useEffect(() => {
+  async function fetchData() {
+    const schemaUrl = searchParams.get("schema_url")
+    if (schemaUrl) {
+      const res = await fetch(schemaUrl)
+      const body = await res.json()
+      console.log('body', body)
+      setSchema(body)
+    } else {
+      setSchema(defaultSchema)
     }
-    fetchData();
-  }, [searchParams]);
+  }
+  fetchData();
+}, [searchParams]);
+*/
 
-  return <Form schema={schema} validator={validator} />
+  // return <Form schema={schema} validator={validator} />
 }
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: <MyForm />,
+      element: <SchemaPicker />,
     },
   ],
   { basename: "/jsonschema-form" }
