@@ -1,9 +1,10 @@
 import React from 'react';
+import Form from '@rjsf/mui';
+import validator from '@rjsf/validator-ajv8';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RJSFSchema } from '@rjsf/utils';
 import { useSearchParams } from 'react-router-dom';
-import { Box } from "@mui/material";
-import { DebouncedTextField as Field } from "./DebouncedTextField";
+import { Box, Button, TextField } from "@mui/material";
 import './App.css';
 
 
@@ -21,34 +22,41 @@ const defaultSchema: RJSFSchema = {
     },
   },
 }
+
+
 function SchemaPicker() {
-  const [searchParams] = useSearchParams()
-  const [schema, setSchema] = React.useState(defaultSchema)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [url, setUrl] = React.useState(searchParams.get("schema_url") || "")
+  const [schema, setSchema] = React.useState(null)
+
 
   return (
-    <Box noValidate component="form">
-      <Field name='Schema URL' onPatch={e => { }} value='' />
-    </Box>
+    <div>
+      <TextField onChange={(e) => { setUrl(e.target.value) }} value={url} fullWidth helperText="Schema URL" />
+      <Button
+        variant="contained"
+        onClick={async () => {
+          setSearchParams({ schema_url: url })
+
+          const res = await fetch(url)
+          const body = await res.json()
+          console.log('body', body)
+          setSchema(body)
+        }}
+        fullWidth
+      >
+        Render
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => { setUrl(""); setSearchParams({}) }}
+        fullWidth
+      >
+        clear
+      </Button>
+      {schema ? <Form schema={schema} validator={validator} /> : null}
+    </div>
   )
-
-  /*
-React.useEffect(() => {
-  async function fetchData() {
-    const schemaUrl = searchParams.get("schema_url")
-    if (schemaUrl) {
-      const res = await fetch(schemaUrl)
-      const body = await res.json()
-      console.log('body', body)
-      setSchema(body)
-    } else {
-      setSchema(defaultSchema)
-    }
-  }
-  fetchData();
-}, [searchParams]);
-*/
-
-  // return <Form schema={schema} validator={validator} />
 }
 
 const router = createBrowserRouter(
