@@ -1,6 +1,6 @@
 import React from "react";
-import Form from '@rjsf/mui';
-import validator from '@rjsf/validator-ajv8';
+import Form from "@rjsf/mui";
+import validator from "@rjsf/validator-ajv8";
 
 export function CreateForm({ schema, submitUrl }) {
   const [formData, setFormData] = React.useState(null);
@@ -13,14 +13,14 @@ export function CreateForm({ schema, submitUrl }) {
         onChange={(e) => setFormData(e.formData)}
         onSubmit={async (e) => {
           const res = await fetch(submitUrl, {
-            method: 'POST',
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),
-          })
-          const body = await res.json()
-          console.log('body', body)
+          });
+          const body = await res.json();
+          console.log("body", body);
         }}
       />
     </div>
-  )
+  );
 }

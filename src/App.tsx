@@ -8,6 +8,7 @@ import { CreateForm } from "./Create";
 
 function SchemaPicker() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [items, setItems] = React.useState([]);
 
   const [schemaUrl, setSchemaUrl] = React.useState(
     searchParams.get("schema_url") || "",
@@ -33,7 +34,7 @@ function SchemaPicker() {
           onChange={(e) => setSubmitUrl(e.target.value)}
           value={submitUrl}
           fullWidth
-          helperText="Post to"
+          helperText="Put URL"
         />
         <Button
           variant="contained"
@@ -53,11 +54,12 @@ function SchemaPicker() {
           disabled={!schema}
           color="primary"
           onClick={async () => {
-            const res = await fetch(`${submitUrl}/`, {
+            const res = await fetch(`${submitUrl}`, {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             });
             const body = await res.json();
+            setItems(body);
           }}
         >
           Get Items
@@ -74,7 +76,7 @@ function SchemaPicker() {
         </Button>
       </Box>
       {schema ? <CreateForm schema={schema} submitUrl={submitUrl} /> : null}
-      <ListRows show={!!schema} />
+      {schema ? <ListRows schema={schema} items={items} /> : null}
     </div>
   );
 }
