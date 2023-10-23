@@ -12,7 +12,7 @@ export function ListRows({
   items: Array<any>;
 }) {
   return (
-    <Collapse in={!!schema}>
+    <Collapse in={!!schema && items && items.length > 0}>
       <Box>
         {items.map((it, i) => {
           console.log(it);
