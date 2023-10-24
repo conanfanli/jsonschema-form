@@ -5,6 +5,7 @@ import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
 import { ListRows } from "./List";
 import { CreateForm } from "./Create";
+import { EventLogTable } from "./eventlog";
 
 function SchemaPicker() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -76,9 +77,10 @@ function SchemaPicker() {
         </Button>
       </Box>
       {schema ? <CreateForm schema={schema} submitUrl={submitUrl} /> : null}
-      {schema ? <ListRows schema={schema} items={items} /> : null}
+      {schema ? <EventLogTable schema={schema} items={items} /> : null}
     </div>
   );
+  // {schema ? <ListRows schema={schema} items={items} /> : null}
 }
 
 const router = createBrowserRouter(
@@ -87,6 +89,12 @@ const router = createBrowserRouter(
       path: "/",
       element: <SchemaPicker />,
     },
+    /*
+    {
+      path: "/eventlog",
+      element: <EventLogTable />,
+    },
+    */
   ],
   { basename: "/jsonschema-form" },
 );
