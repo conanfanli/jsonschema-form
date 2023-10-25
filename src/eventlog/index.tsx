@@ -17,7 +17,7 @@ function getFields(schema) {
   return Object.keys(schema.properties).map((name) => {
     let show = true;
     const field = schema.properties[name];
-    if (field.is_auto_generated || field.format == "uuid") {
+    if (field.is_auto_generated || field.format === "uuid") {
       show = false;
     }
     return {
