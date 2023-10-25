@@ -27,34 +27,6 @@ function getFields(schema) {
   });
 }
 
-/*
-const schema = {
-  properties: {
-    id: { title: "Id", type: "string" },
-    created_ts: { format: "date-time", title: "Created Ts", type: "string" },
-    description: { title: "Description", type: "string" },
-    tags: { title: "Tags", type: "string" },
-  },
-  required: ["created_ts", "description", "tags"],
-  title: "barnie_eventlog1",
-  type: "object",
-};
-
-function createLog(
-  id: string,
-  description: string,
-  tags: string = "",
-  created_ts: string = "",
-) {
-  return {
-    id,
-    created_ts,
-    description,
-    tags,
-  };
-}
-  */
-
 function Row({ columns, row }) {
   console.log("colum", columns);
   console.log(row);
@@ -109,14 +81,6 @@ function Row({ columns, row }) {
     </React.Fragment>
   );
 }
-
-/*
-const rows = [
-createLog("1", "bench 150LBs X 5", "#workout"),
-createLog("2", "medidation 10 min", "#meditation"),
-createLog("3", "ido portal", ""),
-];
-*/
 
 export function EventLogTable({ schema, items }) {
   const columns = getFields(schema)
