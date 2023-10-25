@@ -13,7 +13,13 @@ import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-function getFields(schema) {
+interface IFieldInfo {
+  name: string;
+  show: boolean;
+  type: any;
+  anyOf?: any;
+}
+function getFields(schema): Array<IFieldInfo> {
   return Object.keys(schema.properties).map((name) => {
     let show = true;
     const field = schema.properties[name];
@@ -21,15 +27,33 @@ function getFields(schema) {
       show = false;
     }
     return {
-      name: name,
+      name,
       show,
+      ...field,
     };
   });
 }
 
-function Row({ columns, row }) {
-  console.log("colum", columns);
-  console.log(row);
+function formatField(obj, columnName: string, fieldInfo: IFieldInfo) {
+  const fieldType = fieldInfo.type;
+  const fieldValue = obj[columnName];
+  if (["string", "integer", "null"].includes(fieldType)) {
+    return fieldValue;
+  }
+
+  if (fieldType === "array") {
+    return fieldValue.map((e) => JSON.stringify(e)).join(",");
+  }
+
+  if (fieldType === undefined && fieldInfo.anyOf) {
+    return JSON.stringify(fieldValue);
+  }
+
+  console.warn("undefined attribute", obj, columnName, fieldInfo);
+  return "";
+}
+
+function Row({ columns, row, schema }) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -44,8 +68,10 @@ function Row({ columns, row }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {columns.map((p) => (
-          <TableCell key={p}>{row[p]}</TableCell>
+        {columns.map((c) => (
+          <TableCell key={c}>
+            {formatField(row, c, schema.properties[c])}
+          </TableCell>
         ))}
       </TableRow>
       <TableRow>
@@ -65,7 +91,7 @@ function Row({ columns, row }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.tags.split(" ").map((tag) => (
+                  {columns.map((tag) => (
                     <TableRow key={tag}>
                       <TableCell component="th" scope="row">
                         {tag}
@@ -99,7 +125,7 @@ export function EventLogTable({ schema, items }) {
         </TableHead>
         <TableBody>
           {items.map((row) => (
-            <Row key={row.id} columns={columns} row={row} />
+            <Row key={row.id} columns={columns} row={row} schema={schema} />
           ))}
         </TableBody>
       </Table>
