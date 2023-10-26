@@ -23,7 +23,7 @@ function getFields(schema): Array<IFieldInfo> {
   return Object.keys(schema.properties).map((name) => {
     let show = true;
     const field = schema.properties[name];
-    if (field.is_auto_generated || field.format === "uuid") {
+    if (field.is_hidden || field.format === "uuid") {
       show = false;
     }
     return {
@@ -118,8 +118,10 @@ export function EventLogTable({ schema, items }) {
         <TableHead>
           <TableRow>
             <TableCell />
-            {columns.map((c) => (
-              <TableCell key={c}>{c}</TableCell>
+            {columns.map((column) => (
+              <TableCell key={column}>
+                {schema.properties[column]?.title || column}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
