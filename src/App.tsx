@@ -60,7 +60,12 @@ function SchemaPicker() {
               headers: { "Content-Type": "application/json" },
             });
             const body = await res.json();
-            setItems(body);
+            if (body.error) {
+              console.error("Got error response", body);
+              setItems([]);
+            } else {
+              setItems(body);
+            }
           }}
         >
           Get Items

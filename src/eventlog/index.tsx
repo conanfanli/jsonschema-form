@@ -126,8 +126,8 @@ export function EventLogTable({ schema, items }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {items.map((row) => (
-            <Row key={row.id} columns={columns} row={row} schema={schema} />
+          {items.map((row, i: number) => (
+            <Row key={i} columns={columns} row={row} schema={schema} />
           ))}
         </TableBody>
       </Table>
