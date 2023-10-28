@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.12",
     "@mui/material": "^5.14.12",
+    "@mui/x-data-grid": "^6.17.0",
     "@rjsf/core": "^5.13.0",
     "@rjsf/mui": "^5.13.0",
     "@rjsf/utils": "^5.13.0",

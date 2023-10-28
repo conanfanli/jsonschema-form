@@ -5,12 +5,13 @@ import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
 // import { ListRows } from "./List";
 import { CreateForm } from "./Create";
-import { EventLogTable } from "./eventlog";
+import { EventLogTable, EventLogDataGrid } from "./eventlog";
+import { Schema } from "./types";
 
 export interface AppConfig {
   schemaUrl: string;
   itemsUrl: string;
-  itemsFilters: string;
+  itemsFilters: string; // This is a json string like {"label": "abc"}
 }
 
 function SchemaPicker() {
@@ -27,7 +28,7 @@ function SchemaPicker() {
     itemsFilters: searchParams.get("itemsFilters") || "",
   });
 
-  const [schema, setSchema] = React.useState(null);
+  const [schema, setSchema] = React.useState<Schema | null>(null);
 
   return (
     <div>
@@ -95,7 +96,11 @@ function SchemaPicker() {
           variant="contained"
           color="inherit"
           onClick={() => {
-            setConfig({ schemaUrl: "", itemsUrl: "", itemsFilters: "" });
+            setConfig({
+              schemaUrl: config.schemaUrl,
+              itemsUrl: config.itemsUrl,
+              itemsFilters: "",
+            });
             setSearchParams({});
           }}
         >
@@ -105,7 +110,21 @@ function SchemaPicker() {
       {schema ? (
         <CreateForm schema={schema} submitUrl={config.itemsUrl} />
       ) : null}
-      {schema ? <EventLogTable schema={schema} items={items} /> : null}
+      {schema ? (
+        <EventLogTable
+          schema={schema}
+          items={items}
+          mergeFilter={(addedFilter) =>
+            setConfig({
+              ...config,
+              itemsFilters: JSON.stringify({
+                ...JSON.parse(config.itemsFilters || "{}"),
+                ...addedFilter,
+              }),
+            })
+          }
+        />
+      ) : null}
     </div>
   );
   // {schema ? <ListRows schema={schema} items={items} /> : null}
