@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Link } from "@mui/material";
 
 interface IFieldInfo {
   name: string;
@@ -42,7 +43,14 @@ function formatField(obj, columnName: string, fieldInfo: IFieldInfo) {
   }
 
   if (fieldType === "array") {
-    return fieldValue.map((e) => JSON.stringify(e)).join(",");
+    return fieldValue.map((item) => (
+      <div>
+        <Link component="button" onClick={() => console.log(111)}>
+          {item}
+        </Link>
+      </div>
+    ));
+    // return fieldValue.join(",");
   }
 
   if (fieldType === undefined && fieldInfo.anyOf) {
