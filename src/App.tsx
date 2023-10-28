@@ -24,6 +24,7 @@ function SchemaPicker() {
       (defaultSchemaUrl && defaultSchemaUrl + "/items") ||
       searchParams.get("itemsUrl") ||
       "",
+    itemsFilters: searchParams.get("itemsFilters"),
   });
 
   const [schema, setSchema] = React.useState(null);
