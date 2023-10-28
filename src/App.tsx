@@ -10,7 +10,7 @@ import { EventLogTable } from "./eventlog";
 export interface AppConfig {
   schemaUrl: string;
   itemsUrl: string;
-  itemsFilters?: any;
+  itemsFilters: string;
 }
 
 function SchemaPicker() {
@@ -24,7 +24,7 @@ function SchemaPicker() {
       (defaultSchemaUrl && defaultSchemaUrl + "/items") ||
       searchParams.get("itemsUrl") ||
       "",
-    itemsFilters: searchParams.get("itemsFilters"),
+    itemsFilters: searchParams.get("itemsFilters") || "",
   });
 
   const [schema, setSchema] = React.useState(null);
@@ -48,7 +48,7 @@ function SchemaPicker() {
         />
         <TextField
           onChange={(e) => {
-            setConfig({ ...config, itemsFilters: JSON.parse(e.target.value) });
+            setConfig({ ...config, itemsFilters: e.target.value });
           }}
           value={config.itemsFilters}
           fullWidth
@@ -95,8 +95,8 @@ function SchemaPicker() {
           variant="contained"
           color="inherit"
           onClick={() => {
-            setConfig({ schemaUrl: "", itemsUrl: "" });
-            setSearchParams({ ...config });
+            setConfig({ schemaUrl: "", itemsUrl: "", itemsFilters: "" });
+            setSearchParams({});
           }}
         >
           clear
