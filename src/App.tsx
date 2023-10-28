@@ -7,16 +7,24 @@ import "./App.css";
 import { CreateForm } from "./Create";
 import { EventLogTable } from "./eventlog";
 
+export interface AppConfig {
+  schemaUrl: string;
+  itemsUrl: string;
+  itemsFilters?: any;
+}
+
 function SchemaPicker() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = React.useState([]);
 
-  const [schemaUrl, setSchemaUrl] = React.useState(
-    searchParams.get("schema_url") || "",
-  );
-  const [submitUrl, setSubmitUrl] = React.useState(
-    searchParams.get("submit_url") || "",
-  );
+  const defaultSchemaUrl = searchParams.get("schemaUrl") || "";
+  const [config, setConfig] = React.useState<AppConfig>({
+    schemaUrl: defaultSchemaUrl,
+    itemsUrl:
+      (defaultSchemaUrl && defaultSchemaUrl + "/items") ||
+      searchParams.get("itemsUrl") ||
+      "",
+  });
 
   const [schema, setSchema] = React.useState(null);
 
@@ -25,25 +33,33 @@ function SchemaPicker() {
       <Box noValidate component="form">
         <TextField
           onChange={(e) => {
-            setSchemaUrl(e.target.value);
+            setConfig({ ...config, schemaUrl: e.target.value });
           }}
-          value={schemaUrl}
+          value={config.schemaUrl}
           fullWidth
           helperText="Schema URL"
         />
         <TextField
-          onChange={(e) => setSubmitUrl(e.target.value)}
-          value={submitUrl}
+          onChange={(e) => setConfig({ ...config, itemsUrl: e.target.value })}
+          value={config.itemsUrl}
           fullWidth
           helperText="Put URL"
+        />
+        <TextField
+          onChange={(e) => {
+            setConfig({ ...config, itemsFilters: JSON.parse(e.target.value) });
+          }}
+          value={config.itemsFilters}
+          fullWidth
+          helperText="Items filter"
         />
         <Button
           variant="contained"
           color="primary"
           onClick={async () => {
-            setSearchParams({ schema_url: schemaUrl, submit_url: submitUrl });
+            setSearchParams({ ...config });
 
-            const res = await fetch(schemaUrl);
+            const res = await fetch(config.schemaUrl);
             const body = await res.json();
             setSchema(body);
           }}
@@ -55,10 +71,14 @@ function SchemaPicker() {
           disabled={!schema}
           color="primary"
           onClick={async () => {
-            const res = await fetch(`${submitUrl}`, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            });
+            const res = await fetch(
+              `${config.itemsUrl || config.schemaUrl + "/items"}?` +
+                new URLSearchParams({ filters: config.itemsFilters }),
+              {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+              },
+            );
             const body = await res.json();
             if (body.error) {
               console.error("Got error response", body);
@@ -74,14 +94,16 @@ function SchemaPicker() {
           variant="contained"
           color="inherit"
           onClick={() => {
-            setSchemaUrl("");
-            setSearchParams({});
+            setConfig({ schemaUrl: "", itemsUrl: "" });
+            setSearchParams({ ...config });
           }}
         >
           clear
         </Button>
       </Box>
-      {schema ? <CreateForm schema={schema} submitUrl={submitUrl} /> : null}
+      {schema ? (
+        <CreateForm schema={schema} submitUrl={config.itemsUrl} />
+      ) : null}
       {schema ? <EventLogTable schema={schema} items={items} /> : null}
     </div>
   );
