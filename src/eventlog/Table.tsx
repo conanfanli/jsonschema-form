@@ -13,12 +13,12 @@ import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Link } from "@mui/material";
-import { getFields, IFieldInfo, Schema } from "../types";
+import { getFields, Property, Schema } from "../types";
 
 function formatField(
   obj,
   columnName: string,
-  fieldInfo: any,
+  fieldInfo: Property,
   mergeFilter: (added: any) => void,
 ) {
   const fieldType = fieldInfo.type;
@@ -125,7 +125,7 @@ export function EventLogTable({
   mergeFilter: (any) => void;
 }) {
   const columns = getFields(schema)
-    .filter((f) => f.show)
+    .filter((f) => !f.is_hidden)
     .map((f) => f.name);
   return (
     <TableContainer component={Paper}>

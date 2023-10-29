@@ -3,9 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
-// import { ListRows } from "./List";
 import { CreateForm } from "./Create";
-import { EventLogTable, EventLogDataGrid } from "./eventlog";
+import { EventLogTable } from "./eventlog";
 import { Schema } from "./types";
 
 export interface AppConfig {
