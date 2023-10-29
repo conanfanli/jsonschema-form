@@ -65,21 +65,19 @@ function Row({
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        {columns.map((c) => (
-          <TableCell key={c}>
-            {formatField(row, c, schema.properties[c], mergeFilter)}
-          </TableCell>
-        ))}
+      <TableRow
+        sx={{ "& > *": { borderBottom: "unset" } }}
+        onClick={() => setOpen(!open)}
+      >
+        {columns.map((c, index: number) => {
+          const formatted = formatField(
+            row,
+            c,
+            schema.properties[c],
+            mergeFilter,
+          );
+          return <TableCell key={c}>{formatted}</TableCell>;
+        })}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -92,9 +90,6 @@ function Row({
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -132,7 +127,6 @@ export function EventLogTable({
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell />
             {columns.map((column) => (
               <TableCell key={column}>
                 {schema.properties[column]?.title || column}

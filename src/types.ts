@@ -18,13 +18,7 @@ export interface IFieldInfo extends Property {
 }
 export function getFields(schema: Schema): Array<IFieldInfo> {
   return Object.keys(schema.properties).map((name) => {
-    // let show = true;
     const field = schema.properties[name];
-    /*
-    if (field.is_hidden || field.format === "uuid") {
-      show = false;
-    }
-      */
     return {
       name,
       ...field,
