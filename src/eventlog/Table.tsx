@@ -92,17 +92,16 @@ export function EventLogTable({
   items: any[];
   mergeFilter: (any) => void;
 }) {
-  const columns = getFields(schema)
-    .filter((f) => !f.is_hidden)
-    .map((f) => f.name);
+  const columns = getFields(schema);
+  const visibleColumns = columns.filter((f) => !f.is_hidden);
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            {columns.map((column) => (
-              <TableCell key={column}>
-                {schema.properties[column]?.title || column}
+            {visibleColumns.map((column) => (
+              <TableCell key={column.name}>
+                {column?.title || column.name}
               </TableCell>
             ))}
           </TableRow>
