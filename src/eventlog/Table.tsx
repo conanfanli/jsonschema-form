@@ -77,7 +77,7 @@ function Row({
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Expansion columns={columns} open={open} />
+          <Expansion columns={columns} open={open} row={row} />
         </TableCell>
       </TableRow>
     </React.Fragment>

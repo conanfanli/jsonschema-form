@@ -4,6 +4,7 @@ export interface Property {
   required: string[];
   readOnly?: boolean;
   is_hidden?: boolean;
+  freeze_after_creation?: boolean;
   format?: string;
   properties?: { [key: string]: Property };
   anyOf?: any;

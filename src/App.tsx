@@ -100,7 +100,7 @@ function SchemaPicker() {
               itemsUrl: config.itemsUrl,
               itemsFilters: "",
             });
-            setSearchParams({});
+            setSearchParams({ ...config });
           }}
         >
           clear
