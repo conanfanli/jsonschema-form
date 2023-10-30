@@ -23,9 +23,10 @@ export function Expansion({
 }
 
 function EditForm({ columns }: { columns: IFieldInfo[] }) {
+  const editable = columns.filter((c) => !c.readOnly);
   return (
     <Box noValidate component="form">
-      {columns.map((col) => (
+      {editable.map((col) => (
         <TextField fullWidth helperText={col.name} />
       ))}
     </Box>

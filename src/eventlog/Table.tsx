@@ -58,13 +58,14 @@ function Row({
 }) {
   const [open, setOpen] = React.useState(false);
 
+  const visibleColumns = columns.filter((f) => !f.is_hidden);
   return (
     <React.Fragment>
       <TableRow
         sx={{ "& > *": { borderBottom: "unset" } }}
         onClick={() => setOpen(!open)}
       >
-        {columns.map((c, index: number) => {
+        {visibleColumns.map((c, index: number) => {
           const formatted = formatField(
             row,
             c.name,
@@ -111,7 +112,7 @@ export function EventLogTable({
             <Row
               mergeFilter={mergeFilter}
               key={i}
-              columns={visibleColumns}
+              columns={columns}
               row={row}
               schema={schema}
             />
