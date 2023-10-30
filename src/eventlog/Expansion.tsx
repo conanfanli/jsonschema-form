@@ -23,11 +23,10 @@ export function Expansion({
 }
 
 function EditForm({ columns }: { columns: IFieldInfo[] }) {
-  console.log(111, columns);
   return (
     <Box noValidate component="form">
       {columns.map((col) => (
-        <TextField fullWidth helperText={col.name} label="afa" />
+        <TextField fullWidth helperText={col.name} />
       ))}
     </Box>
   );
