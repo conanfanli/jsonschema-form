@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Link } from "@mui/material";
-import { getFields, Property, Schema } from "../types";
+import { getFields, IFieldInfo, Property, Schema } from "../types";
 import { Expansion } from "./Expansion";
 
 function formatField(
@@ -51,7 +51,7 @@ function Row({
   schema,
   mergeFilter,
 }: {
-  columns: any[];
+  columns: IFieldInfo[];
   row: any;
   schema: Schema;
   mergeFilter: (f: string) => void;
@@ -67,11 +67,11 @@ function Row({
         {columns.map((c, index: number) => {
           const formatted = formatField(
             row,
-            c,
-            schema.properties[c],
+            c.name,
+            schema.properties[c.name],
             mergeFilter,
           );
-          return <TableCell key={c}>{formatted}</TableCell>;
+          return <TableCell key={c.name}>{formatted}</TableCell>;
         })}
       </TableRow>
       <TableRow>
@@ -111,7 +111,7 @@ export function EventLogTable({
             <Row
               mergeFilter={mergeFilter}
               key={i}
-              columns={columns}
+              columns={visibleColumns}
               row={row}
               schema={schema}
             />
