@@ -1,10 +1,7 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { Collapse, Box, Button, TextField, Autocomplete } from "@mui/material";
-import { CreateForm } from "./Create";
-import { EventLogTable } from "./eventlog";
-import { AppConfig, Schema } from "./types";
+import { AppConfig } from "./types";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 
@@ -18,7 +15,12 @@ function saveConfig(saved: AppConfig[], newConfig: AppConfig) {
     ...saved.filter((config) => config.name !== newConfig.name),
     newConfig,
   ];
-  localStorage.setItem("appconfigs", JSON.stringify(newOptions));
+  localStorage.setItem("savedConfigs", JSON.stringify(newOptions));
+  return newOptions;
+}
+function removeConfig(saved: AppConfig[], toRemove: AppConfig) {
+  const newOptions = saved.filter((config) => config.name !== toRemove.name);
+  localStorage.setItem("savedConfigs", JSON.stringify(newOptions));
   return newOptions;
 }
 /*
@@ -51,7 +53,7 @@ export function ConfigForm() {
       setOptions([...savedConfigs]);
       console.log("set options", savedConfigs);
     }
-  });
+  }, []);
 
   return (
     <Box noValidate component="form">
@@ -63,7 +65,12 @@ export function ConfigForm() {
         Config
       </Button>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <ConfigSelect options={options} />
+        <ConfigSelect
+          options={options}
+          onSelect={(selected: AppConfig) => {
+            setConfig({ ...config, ...selected });
+          }}
+        />
         <TextField
           onChange={(e) => {
             setConfig({ ...config, schemaUrl: e.target.value });
@@ -92,16 +99,33 @@ export function ConfigForm() {
           onClick={() => {
             const newOptions = saveConfig(options, config);
             setOptions(newOptions);
+            setSearchParams({ ...config });
           }}
         >
           Save
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            const newOptions = removeConfig(options, config);
+            setOptions(newOptions);
+          }}
+        >
+          delete
         </Button>
       </Collapse>
     </Box>
   );
 }
 
-function ConfigSelect({ options }: { options: AppConfigOption[] }) {
+function ConfigSelect({
+  options,
+  onSelect,
+}: {
+  options: AppConfigOption[];
+  onSelect: (AppConfigOption) => void;
+}) {
   const [value, setValue] = React.useState<AppConfigOption | null>(null);
   return (
     <Autocomplete
@@ -112,14 +136,17 @@ function ConfigSelect({ options }: { options: AppConfigOption[] }) {
           setValue({
             name: newValue,
           });
+          // onSelect(newValue);
         } else if (newValue && newValue.inputValue) {
           // Create a new value from the user input
           setValue({
             name: newValue.inputValue,
           });
+          // onSelect(newValue.inputValue);
         } else {
           setValue(newValue);
         }
+        onSelect(newValue);
       }}
       clearOnBlur
       options={options}
