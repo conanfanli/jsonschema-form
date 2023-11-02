@@ -18,7 +18,9 @@ export interface IFieldInfo extends Property {
   name: string;
 }
 export function getFields(schema: Schema): Array<IFieldInfo> {
-  return Object.keys(schema.properties).map((name) => {
+  const keys = Object.keys(schema.properties);
+  keys.sort((k) => (k.toLowerCase().includes("date") ? 0 : 1));
+  return keys.map((name) => {
     const field = schema.properties[name];
     return {
       name,
