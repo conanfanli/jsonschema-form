@@ -28,3 +28,9 @@ export function getFields(schema: Schema): Array<IFieldInfo> {
     };
   });
 }
+export interface AppConfig {
+  name: string;
+  schemaUrl?: string;
+  itemsUrl?: string;
+  itemsFilters?: string; // This is a json string like {"label": "abc"}
+}
