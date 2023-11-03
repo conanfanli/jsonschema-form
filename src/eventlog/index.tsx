@@ -45,7 +45,7 @@ export function EventLog() {
     };
 
     fetchData();
-  }, []);
+  });
 
   return (
     <div>

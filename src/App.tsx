@@ -1,17 +1,11 @@
 import React from "react";
-import {
-  createBrowserRouter,
-  Outlet,
-  RouterProvider,
-  useParams,
-} from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
 import { CreateForm } from "./Create";
 import { EventLog, EventLogTable } from "./eventlog";
 import { Schema } from "./types";
-import { ConfigForm } from "./AppConfig";
 
 export interface AppConfig {
   schemaUrl: string;
@@ -19,7 +13,7 @@ export interface AppConfig {
   itemsFilters: string; // This is a json string like {"label": "abc"}
 }
 
-function SchemaPicker() {
+export function SchemaPicker() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = React.useState([]);
 

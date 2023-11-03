@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Collapse, Box, Button, TextField, Autocomplete } from "@mui/material";
 import { AppConfig } from "./types";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
