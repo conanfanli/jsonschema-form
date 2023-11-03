@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
@@ -130,22 +130,25 @@ function SchemaPicker() {
   // {schema ? <ListRows schema={schema} items={items} /> : null}
 }
 
+function Root() {
+  return (
+    <>
+      <div style={{ marginTop: "3ch" }} id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
 const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: <SchemaPicker />,
+      element: <Root />,
+      children: [
+        { path: "/", element: <SchemaPicker /> },
+        { path: "/config", element: <ConfigForm /> },
+      ],
     },
-    {
-      path: "/config",
-      element: <ConfigForm />,
-    },
-    /*
-    {
-      path: "/eventlog",
-      element: <EventLogTable />,
-    },
-    */
   ],
   { basename: "/jsonschema-form" },
 );

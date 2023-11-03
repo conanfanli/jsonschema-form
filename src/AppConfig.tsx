@@ -6,7 +6,7 @@ import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 
 interface AppConfigOption extends AppConfig {
-  inputValue?: string;
+  isNew?: boolean;
 }
 const filter = createFilterOptions<AppConfigOption>();
 
@@ -124,7 +124,7 @@ function ConfigSelect({
   onSelect,
 }: {
   options: AppConfigOption[];
-  onSelect: (AppConfigOption) => void;
+  onSelect: (AppConfig) => void;
 }) {
   const [value, setValue] = React.useState<AppConfigOption | null>(null);
   return (
@@ -136,16 +136,14 @@ function ConfigSelect({
           setValue({
             name: newValue,
           });
-          // onSelect(newValue);
-        } else if (newValue && newValue.inputValue) {
+          return;
+        } else if (newValue && newValue.isNew) {
           // Create a new value from the user input
-          setValue({
-            name: newValue.inputValue,
-          });
-          // onSelect(newValue.inputValue);
+          setValue(newValue);
         } else {
           setValue(newValue);
         }
+        delete newValue?.isNew;
         onSelect(newValue);
       }}
       clearOnBlur
@@ -156,13 +154,14 @@ function ConfigSelect({
           return option;
         }
         // Add "xxx" option created dynamically
-        if (option.inputValue) {
-          return option.name;
+        if (option.isNew) {
+          return `+ ${option.name}`;
         }
         // Regular option
         return option.name;
       }}
       filterOptions={(options, params) => {
+        // Return which ones to display
         const filtered = filter(options, params);
 
         const { inputValue } = params;
@@ -170,8 +169,8 @@ function ConfigSelect({
         const isExisting = options.some((option) => inputValue === option.name);
         if (inputValue !== "" && !isExisting) {
           filtered.push({
-            inputValue: inputValue,
-            name: `Add "${inputValue}"`,
+            isNew: true,
+            name: `${inputValue}`,
           });
         }
 
