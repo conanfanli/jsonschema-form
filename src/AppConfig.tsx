@@ -1,5 +1,5 @@
 import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Collapse, Box, Button, TextField, Autocomplete } from "@mui/material";
 import { AppConfig } from "./types";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
@@ -64,7 +64,12 @@ export function ConfigForm() {
       >
         Config
       </Button>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse
+        style={{ marginTop: "1ch" }}
+        in={open}
+        timeout="auto"
+        unmountOnExit
+      >
         <ConfigSelect
           options={options}
           onSelect={(selected: AppConfig) => {

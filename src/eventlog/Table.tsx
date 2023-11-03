@@ -87,11 +87,11 @@ function Row({
 export function EventLogTable({
   schema,
   items,
-  mergeFilter,
+  mergeFilter = () => {},
 }: {
   schema: Schema;
   items: any[];
-  mergeFilter: (any) => void;
+  mergeFilter?: (any) => void;
 }) {
   const columns = getFields(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);

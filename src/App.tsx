@@ -1,10 +1,15 @@
 import React from "react";
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Outlet,
+  RouterProvider,
+  useParams,
+} from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
 import { CreateForm } from "./Create";
-import { EventLogTable } from "./eventlog";
+import { EventLog, EventLogTable } from "./eventlog";
 import { Schema } from "./types";
 import { ConfigForm } from "./AppConfig";
 
@@ -133,7 +138,7 @@ function SchemaPicker() {
 function Root() {
   return (
     <>
-      <div style={{ marginTop: "3ch" }} id="detail">
+      <div style={{ marginTop: "1ch" }} id="detail">
         <Outlet />
       </div>
     </>
@@ -145,8 +150,10 @@ const router = createBrowserRouter(
       path: "/",
       element: <Root />,
       children: [
-        { path: "/", element: <SchemaPicker /> },
-        { path: "/config", element: <ConfigForm /> },
+        // { path: "/", element: <SchemaPicker /> },
+        // { path: "/config", element: <ConfigForm /> },
+        { path: "/:configName", element: <EventLog /> },
+        // { path: "/config/:configName", element: <ConfigForm /> },
       ],
     },
   ],
