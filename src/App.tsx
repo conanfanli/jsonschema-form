@@ -146,7 +146,7 @@ const router = createBrowserRouter(
       element: <Root />,
       children: [
         // { path: "/", element: <SchemaPicker /> },
-        { path: "/config", element: <ConfigForm /> },
+        { path: "/", element: <ConfigForm /> },
         { path: "/:configName", element: <EventLog /> },
         // { path: "/config/:configName", element: <ConfigForm /> },
       ],
