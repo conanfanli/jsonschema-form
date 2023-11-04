@@ -45,7 +45,7 @@ export function EventLog() {
     };
 
     fetchData();
-  });
+  }, [config.schemaUrl, config.itemsFilters, config.itemsUrl]);
 
   return (
     <div>

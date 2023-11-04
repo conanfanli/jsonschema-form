@@ -6,6 +6,7 @@ import "./App.css";
 import { CreateForm } from "./Create";
 import { EventLog, EventLogTable } from "./eventlog";
 import { Schema } from "./types";
+import { ConfigForm } from "./AppConfig";
 
 export interface AppConfig {
   schemaUrl: string;
@@ -145,7 +146,7 @@ const router = createBrowserRouter(
       element: <Root />,
       children: [
         // { path: "/", element: <SchemaPicker /> },
-        // { path: "/config", element: <ConfigForm /> },
+        { path: "/config", element: <ConfigForm /> },
         { path: "/:configName", element: <EventLog /> },
         // { path: "/config/:configName", element: <ConfigForm /> },
       ],
