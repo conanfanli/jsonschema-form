@@ -22,6 +22,12 @@ function formatField(
     return fieldValue;
   }
 
+  if (fieldType === "boolean") {
+    return fieldValue.toString();
+  }
+
+  // TODO: Display a link for array fields?
+  // Probably not a right generic approach
   if (fieldType === "array") {
     return fieldValue.map((item) => (
       <div>
@@ -31,7 +37,7 @@ function formatField(
             mergeFilter({ [columnName]: { operator: "contains", value: item } })
           }
         >
-          {item}
+          {JSON.stringify(item)}
         </Link>
       </div>
     ));
@@ -42,7 +48,7 @@ function formatField(
   }
 
   console.warn("undefined attribute", obj, columnName, fieldInfo);
-  return "";
+  return JSON.stringify(fieldValue);
 }
 
 function Row({
