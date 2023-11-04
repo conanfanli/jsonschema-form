@@ -29,17 +29,16 @@ function formatField(
   // TODO: Display a link for array fields?
   // Probably not a right generic approach
   if (fieldType === "array") {
-    return fieldValue.map((item) => (
-      <div>
-        <Link
-          component="button"
-          onClick={() =>
-            mergeFilter({ [columnName]: { operator: "contains", value: item } })
-          }
-        >
-          {JSON.stringify(item)}
-        </Link>
-      </div>
+    return fieldValue.map((item, index) => (
+      <Link
+        key={index}
+        component="button"
+        onClick={() =>
+          mergeFilter({ [columnName]: { operator: "contains", value: item } })
+        }
+      >
+        {JSON.stringify(item)}
+      </Link>
     ));
   }
 
