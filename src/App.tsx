@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import "./App.css";
 import { CreateForm } from "./Create";
-import { EventLog, EventLogTable } from "./eventlog";
+import { DynoTablePage, SchemaTable } from "./dynotable";
 import { Schema } from "./types";
 import { ConfigForm } from "./AppConfig";
 
@@ -111,7 +111,7 @@ export function SchemaPicker() {
         <CreateForm schema={schema} submitUrl={config.itemsUrl} />
       ) : null}
       {schema ? (
-        <EventLogTable
+        <SchemaTable
           schema={schema}
           items={items}
           mergeFilter={(addedFilter) =>
@@ -147,7 +147,7 @@ const router = createBrowserRouter(
       children: [
         // { path: "/", element: <SchemaPicker /> },
         { path: "/", element: <ConfigForm /> },
-        { path: "/:configName", element: <EventLog /> },
+        { path: "/:configName", element: <DynoTablePage /> },
         // { path: "/config/:configName", element: <ConfigForm /> },
       ],
     },

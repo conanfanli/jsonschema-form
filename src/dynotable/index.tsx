@@ -1,11 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Schema } from "../types";
-import { EventLogTable } from "./Table";
-export { EventLogTable } from "./Table";
+import { SchemaTable } from "./Table";
+export { SchemaTable } from "./Table";
 export { EventLogDataGrid } from "./DataGrid";
 
-export function EventLog() {
+export function DynoTablePage() {
   const { configName } = useParams();
 
   const [error, setError] = React.useState("");
@@ -50,9 +50,7 @@ export function EventLog() {
   return (
     <div>
       {error}
-      <div>
-        {schema ? <EventLogTable schema={schema} items={items} /> : null}
-      </div>
+      <div>{schema ? <SchemaTable schema={schema} items={items} /> : null}</div>
     </div>
   );
 }

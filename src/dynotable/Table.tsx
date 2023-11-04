@@ -90,7 +90,7 @@ function Row({
   );
 }
 
-export function EventLogTable({
+export function SchemaTable({
   schema,
   items,
   mergeFilter = () => {},
