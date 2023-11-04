@@ -1,5 +1,5 @@
 import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Collapse, Box, Button, TextField, Autocomplete } from "@mui/material";
 import { AppConfig } from "./types";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
@@ -29,6 +29,7 @@ function removeConfig(saved: AppConfig[], toRemove: AppConfig) {
  *
  */
 export function ConfigForm() {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -118,6 +119,15 @@ export function ConfigForm() {
           }}
         >
           delete
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            navigate(`/${config.name}`);
+          }}
+        >
+          Go
         </Button>
       </Collapse>
     </Box>
