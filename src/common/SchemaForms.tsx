@@ -1,30 +1,47 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
-import { IFieldInfo } from "../types";
+import { getFields, IFieldInfo, Schema } from "../types";
 
-export function SchemaCreateForm({ schema, submitUrl }) {
-  const [formData, setFormData] = React.useState(null);
+export function SchemaCreateForm({
+  schema,
+  submitUrl,
+}: {
+  schema: Schema;
+  submitUrl: string;
+}) {
+  const [data, setData] = React.useState({});
+  const writableFields = getFields(schema).filter((f) => !f.readOnly);
   return (
-    <div>
-      <Form
-        schema={schema}
-        validator={validator}
-        formData={formData}
-        onChange={(e) => setFormData(e.formData)}
-        onSubmit={async (e) => {
+    <Box noValidate component="form">
+      <Typography variant="h4">{schema.title}</Typography>
+      {writableFields.map((f) => (
+        <EditField
+          creationMode={true}
+          key={f.name}
+          fieldInfo={f}
+          value={data[f.name]}
+          onChange={(newValue) => setData({ ...data, [f.name]: newValue })}
+        />
+      ))}
+      <Button
+        onClick={async (e) => {
           const res = await fetch(submitUrl, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(data),
           });
           const body = await res.json();
           console.log("body", body);
         }}
-      />
-    </div>
+        variant="contained"
+        color="primary"
+      >
+        Submit
+      </Button>
+    </Box>
   );
 }
 export function SchemaEditForm({
@@ -34,17 +51,55 @@ export function SchemaEditForm({
   columns: IFieldInfo[];
   row: any;
 }) {
+  const [data, setData] = React.useState(row);
   const editable = columns.filter((c) => !c.readOnly);
   return (
     <Box noValidate component="form">
       {editable.map((col) => (
-        <TextField
-          fullWidth
-          helperText={col.name}
+        <EditField
+          creationMode={false}
+          key={col.name}
+          fieldInfo={col}
           value={row[col.name]}
-          disabled={col.freeze_after_creation}
+          onChange={(newValue) => setData({ ...data, [col.name]: newValue })}
         />
       ))}
     </Box>
+  );
+}
+
+function EditField({
+  fieldInfo,
+  value,
+  creationMode,
+  onChange,
+}: {
+  fieldInfo: IFieldInfo;
+  value: any;
+  creationMode: boolean;
+  onChange: (any) => void;
+}) {
+  let inputType = "text";
+  switch (fieldInfo.type) {
+    case "integer":
+      inputType = "number";
+      break;
+    case "string":
+      if (fieldInfo.format === "date-time") {
+        inputType = "datetime-local";
+      }
+      break;
+    default:
+      break;
+  }
+  return (
+    <TextField
+      fullWidth
+      helperText={fieldInfo.title || fieldInfo.name}
+      value={value}
+      disabled={!creationMode && fieldInfo.freeze_after_creation}
+      onChange={(e) => onChange(e.target.value)}
+      type={inputType}
+    />
   );
 }
