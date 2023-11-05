@@ -2,7 +2,7 @@ import React from "react";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
-export function CreateForm({ schema, submitUrl }) {
+export function SchemaCreateForm({ schema, submitUrl }) {
   const [formData, setFormData] = React.useState(null);
   return (
     <div>
