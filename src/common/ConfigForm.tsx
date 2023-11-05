@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Collapse, Box, Button, TextField, Autocomplete } from "@mui/material";
-import { AppConfig } from "./types";
+import { AppConfig } from "../types";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 

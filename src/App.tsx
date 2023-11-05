@@ -2,7 +2,7 @@ import React from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { DynoTablePage } from "./dynotable";
-import { ConfigForm } from "./AppConfig";
+import { ConfigForm } from "./common/ConfigForm";
 
 function Root() {
   return (

@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { SchemaCreateForm } from "../common/SchemaCreateForm";
 import { Schema } from "../types";
 import { SchemaTable } from "./Table";
 export { SchemaTable } from "./Table";
@@ -50,6 +51,7 @@ export function DynoTablePage() {
   return (
     <div>
       {error}
+      <SchemaCreateForm schema={schema} submitUrl={config.itemsUrl} />
       <div>{schema ? <SchemaTable schema={schema} items={items} /> : null}</div>
     </div>
   );
