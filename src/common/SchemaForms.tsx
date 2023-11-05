@@ -1,9 +1,8 @@
 import React from "react";
 import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import Form from "@rjsf/mui";
-import validator from "@rjsf/validator-ajv8";
 import { getFields, IFieldInfo, Schema } from "../types";
+import { ConfigContext } from "./contextProvider";
 
 export function SchemaCreateForm({
   schema,
@@ -51,8 +50,14 @@ export function SchemaEditForm({
   columns: IFieldInfo[];
   row: any;
 }) {
+  const config = React.useContext(ConfigContext);
   const [data, setData] = React.useState(row);
   const editable = columns.filter((c) => !c.readOnly);
+
+  if (!config || !config.itemsUrl) {
+    return <div></div>;
+  }
+
   return (
     <Box noValidate component="form">
       {editable.map((col) => (
@@ -64,6 +69,36 @@ export function SchemaEditForm({
           onChange={(newValue) => setData({ ...data, [col.name]: newValue })}
         />
       ))}
+      <Button
+        onClick={async (e) => {
+          const res = await fetch(config.itemsUrl || "", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const body = await res.json();
+          console.log("body", body);
+        }}
+        variant="contained"
+        color="primary"
+      >
+        Submit
+      </Button>
+      <Button
+        onClick={async (e) => {
+          const res = await fetch(config.itemsUrl || "", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const body = await res.json();
+          console.log("body", body);
+        }}
+        variant="contained"
+        color="secondary"
+      >
+        Delete
+      </Button>
     </Box>
   );
 }

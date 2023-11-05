@@ -3,13 +3,16 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { DynoTablePage } from "./dynotable";
 import { ConfigForm } from "./common/ConfigForm";
+import { ConfigProvider } from "./common/contextProvider";
 
 function Root() {
   return (
     <>
-      <div style={{ marginTop: "1ch" }} id="detail">
-        <Outlet />
-      </div>
+      <ConfigProvider>
+        <div style={{ marginTop: "1ch" }} id="detail">
+          <Outlet />
+        </div>
+      </ConfigProvider>
     </>
   );
 }
