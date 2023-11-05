@@ -46,7 +46,7 @@ function formatField(
     return JSON.stringify(fieldValue);
   }
 
-  console.warn("undefined attribute", obj, columnName, fieldInfo);
+  console.warn("cannot format field", columnName, obj, fieldInfo);
   return JSON.stringify(fieldValue);
 }
 

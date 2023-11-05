@@ -20,14 +20,14 @@ export function SchemaCreateForm({
   const [data, setData] = React.useState({});
   const writableFields = getFields(schema).filter((f) => !f.readOnly);
   return (
-    <Box noValidate component="form">
+    <Box>
       <Typography variant="h4">{schema.title}</Typography>
       {writableFields.map((f) => (
         <EditField
           creationMode={true}
           key={f.name}
           fieldInfo={f}
-          value={data[f.name]}
+          value={data[f.name] || ""}
           onChange={(newValue) => setData({ ...data, [f.name]: newValue })}
         />
       ))}
@@ -50,11 +50,15 @@ export function SchemaCreateForm({
   );
 }
 export function SchemaEditForm({
+  title,
   columns,
   row,
+  noButtons = false,
 }: {
+  title?: string;
   columns: IFieldInfo[];
   row: any;
+  noButtons?: boolean;
 }) {
   const config = React.useContext(ConfigContext);
   const [data, setData] = React.useState(row);
@@ -65,7 +69,8 @@ export function SchemaEditForm({
   }
 
   return (
-    <Box noValidate component="form">
+    <Box>
+      {title ? <Typography variant="h4">{title}</Typography> : null}
       {editable.map((col) => (
         <EditField
           creationMode={false}
@@ -75,36 +80,40 @@ export function SchemaEditForm({
           onChange={(newValue) => setData({ ...data, [col.name]: newValue })}
         />
       ))}
-      <Button
-        onClick={async (e) => {
-          const res = await fetch(config.itemsUrl || "", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-          const body = await res.json();
-          console.log("body", body);
-        }}
-        variant="contained"
-        color="primary"
-      >
-        Submit
-      </Button>
-      <Button
-        onClick={async (e) => {
-          const res = await fetch(config.itemsUrl || "", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-          const body = await res.json();
-          console.log("body", body);
-        }}
-        variant="contained"
-        color="secondary"
-      >
-        Delete
-      </Button>
+      {!noButtons ? (
+        <>
+          <Button
+            onClick={async (e) => {
+              const res = await fetch(config.itemsUrl || "", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+              const body = await res.json();
+              console.log("body", body);
+            }}
+            variant="contained"
+            color="primary"
+          >
+            Submit
+          </Button>
+          <Button
+            onClick={async (e) => {
+              const res = await fetch(config.itemsUrl || "", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+              const body = await res.json();
+              console.log("body", body);
+            }}
+            variant="contained"
+            color="secondary"
+          >
+            Delete
+          </Button>{" "}
+        </>
+      ) : null}
     </Box>
   );
 }
@@ -122,6 +131,20 @@ function EditField({
 }) {
   let inputType = "text";
   switch (fieldInfo.type) {
+    case "composite":
+      if (fieldInfo.$ref) {
+        return (
+          <Box sx={{ ml: 4 }}>
+            <SchemaEditForm
+              title={fieldInfo.title || fieldInfo.name}
+              columns={getFields(fieldInfo.$ref)}
+              row={value || {}}
+              noButtons
+            />
+          </Box>
+        );
+      }
+      break;
     case "boolean":
       inputType = "checkbox";
       return (
@@ -144,13 +167,14 @@ function EditField({
       }
       break;
     default:
+      console.error("cannot decided input field for", fieldInfo);
       break;
   }
   return (
     <TextField
       fullWidth
       helperText={fieldInfo.title || fieldInfo.name}
-      value={value}
+      value={value || ""}
       disabled={!creationMode && fieldInfo.freeze_after_creation}
       onChange={(e) => onChange(e.target.value)}
       type={inputType}
