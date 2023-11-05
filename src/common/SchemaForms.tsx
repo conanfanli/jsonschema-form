@@ -2,6 +2,7 @@ import React from "react";
 import {
   Button,
   Checkbox,
+  Collapse,
   FormControlLabel,
   Link,
   TextField,
@@ -128,21 +129,34 @@ function EditField({
   onChange: (any) => void;
 }) {
   let inputType = "text";
+  const [open, setOpen] = React.useState(false);
   switch (fieldInfo.type) {
     case "composite":
       if (fieldInfo.$ref) {
         return (
           <>
-            <Link component="button" variant="h6">
+            <Link
+              component="button"
+              variant="h6"
+              onClick={(e) => setOpen(!open)}
+            >
               {fieldInfo.title || fieldInfo.name}
             </Link>
-            <Box sx={{ ml: 4 }}>
-              <SchemaEditForm
-                columns={getFields(fieldInfo.$ref)}
-                row={value || {}}
-                noButtons
-              />
-            </Box>
+            <div></div>
+            <Collapse
+              style={{ marginTop: "1ch" }}
+              in={open}
+              timeout="auto"
+              unmountOnExit
+            >
+              <Box sx={{ ml: 4 }}>
+                <SchemaEditForm
+                  columns={getFields(fieldInfo.$ref)}
+                  row={value || {}}
+                  noButtons
+                />
+              </Box>
+            </Collapse>
           </>
         );
       }
