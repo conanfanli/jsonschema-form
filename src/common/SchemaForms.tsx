@@ -50,12 +50,10 @@ export function SchemaCreateForm({
   );
 }
 export function SchemaEditForm({
-  title,
   columns,
   row,
   noButtons = false,
 }: {
-  title?: string;
   columns: IFieldInfo[];
   row: any;
   noButtons?: boolean;
@@ -70,7 +68,6 @@ export function SchemaEditForm({
 
   return (
     <Box>
-      {title ? <Typography variant="h4">{title}</Typography> : null}
       {editable.map((col) => (
         <EditField
           creationMode={false}
@@ -134,14 +131,18 @@ function EditField({
     case "composite":
       if (fieldInfo.$ref) {
         return (
-          <Box sx={{ ml: 4 }}>
-            <SchemaEditForm
-              title={fieldInfo.title || fieldInfo.name}
-              columns={getFields(fieldInfo.$ref)}
-              row={value || {}}
-              noButtons
-            />
-          </Box>
+          <>
+            <Typography variant="h6">
+              {fieldInfo.title || fieldInfo.name}
+            </Typography>
+            <Box sx={{ ml: 4 }}>
+              <SchemaEditForm
+                columns={getFields(fieldInfo.$ref)}
+                row={value || {}}
+                noButtons
+              />
+            </Box>
+          </>
         );
       }
       break;
