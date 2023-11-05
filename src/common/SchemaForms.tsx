@@ -1,5 +1,11 @@
 import React from "react";
-import { Button, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { getFields, IFieldInfo, Schema } from "../types";
 import { ConfigContext } from "./contextProvider";
@@ -116,6 +122,19 @@ function EditField({
 }) {
   let inputType = "text";
   switch (fieldInfo.type) {
+    case "boolean":
+      inputType = "checkbox";
+      return (
+        <FormControlLabel
+          control={
+            <Checkbox
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+            />
+          }
+          label={fieldInfo.title || fieldInfo.name}
+        />
+      );
     case "integer":
       inputType = "number";
       break;
