@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Link,
   TextField,
   Typography,
 } from "@mui/material";
@@ -132,9 +133,9 @@ function EditField({
       if (fieldInfo.$ref) {
         return (
           <>
-            <Typography variant="h6">
+            <Link component="button" variant="h6">
               {fieldInfo.title || fieldInfo.name}
-            </Typography>
+            </Link>
             <Box sx={{ ml: 4 }}>
               <SchemaEditForm
                 columns={getFields(fieldInfo.$ref)}
@@ -173,8 +174,11 @@ function EditField({
   }
   return (
     <TextField
+      sx={{ m: 0.5 }}
+      size="small"
+      variant="standard"
       fullWidth
-      helperText={fieldInfo.title || fieldInfo.name}
+      label={fieldInfo.title || fieldInfo.name}
       value={value || ""}
       disabled={!creationMode && fieldInfo.freeze_after_creation}
       onChange={(e) => onChange(e.target.value)}
