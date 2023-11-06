@@ -30,7 +30,9 @@ export function SchemaCreateForm({
           key={f.name}
           fieldInfo={f}
           value={data[f.name] || ""}
-          onChange={(newValue) => setData({ ...data, [f.name]: newValue })}
+          onChange={(newValue) => {
+            setData({ ...data, [f.name]: newValue });
+          }}
         />
       ))}
       <Button
@@ -75,8 +77,11 @@ export function SchemaEditForm({
           creationMode={false}
           key={col.name}
           fieldInfo={col}
-          value={row[col.name]}
-          onChange={(newValue) => setData({ ...data, [col.name]: newValue })}
+          value={data[col.name]}
+          onChange={(newValue) => {
+            console.log("change", newValue);
+            setData({ ...data, [col.name]: newValue });
+          }}
         />
       ))}
       {!noButtons ? (
@@ -192,7 +197,7 @@ function EditField({
       size="small"
       variant="standard"
       fullWidth
-      label={fieldInfo.title || fieldInfo.name}
+      helperText={fieldInfo.title || fieldInfo.name}
       value={value || ""}
       disabled={!creationMode && fieldInfo.freeze_after_creation}
       onChange={(e) => onChange(e.target.value)}
