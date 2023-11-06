@@ -4,12 +4,14 @@ import "./App.css";
 import { DynoTablePage } from "./dynotable";
 import { ConfigForm } from "./common/ConfigForm";
 import { ConfigProvider } from "./common/contextProvider";
+import { ErrorCenter } from "./common/ErrorCenter";
 
 function Root() {
   return (
     <>
       <ConfigProvider>
-        <div style={{ marginTop: "1ch" }} id="detail">
+        <div style={{ margin: "1ch" }} id="detail">
+          <ErrorCenter />
           <Outlet />
         </div>
       </ConfigProvider>

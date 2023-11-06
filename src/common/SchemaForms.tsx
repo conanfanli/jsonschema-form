@@ -62,7 +62,7 @@ export function SchemaEditForm({
   row: any;
   noButtons?: boolean;
 }) {
-  const config = React.useContext(ConfigContext);
+  const { config } = React.useContext(ConfigContext);
   const [data, setData] = React.useState(row);
   const editable = columns.filter((c) => !c.readOnly);
 
