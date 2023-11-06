@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { SchemaClient } from "../clients";
 import { SchemaCreateForm } from "../common/SchemaForms";
 import { Schema } from "../types";
 import { SchemaTable } from "./Table";
@@ -11,38 +12,31 @@ export function DynoTablePage() {
 
   const [error, setError] = React.useState("");
   const [schema, setSchema] = React.useState<Schema | null>(null);
-  const [items, setItems] = React.useState([]);
+  const [items, setItems] = React.useState<any[]>([]);
 
   const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
   const config = configs.find((c) => c.name === configName);
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch(config.schemaUrl);
-      const body = await res.json();
+      const client = new SchemaClient(config.schemaUrl);
+      const [schema, errorMessage] = await client.getSchema();
 
-      if (body.errorMessage) {
-        setError(body.errorMessage);
+      if (errorMessage) {
+        setError(errorMessage);
         return;
       }
-      setSchema(body);
+      setSchema(schema);
 
-      const res2 = await fetch(
-        `${config.itemsUrl || config.schemaUrl + "/items"}?` +
-          new URLSearchParams({ filters: config.itemsFilters }),
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      const [items, errorMessage2] = await client.getItems(config.itemsUrl, {
+        filters: config.itemsFilters,
+      });
 
-      const body2 = await res2.json();
-      if (body2.error || body2.errorMessage) {
-        console.error("Got error response", body2);
-        setItems([]);
-      } else {
-        setItems(body2);
+      if (!items || errorMessage2) {
+        setError(errorMessage2);
+        return;
       }
+      setItems(items);
     };
 
     fetchData();
