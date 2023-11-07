@@ -21,7 +21,11 @@ export function ErrorCenter() {
         />
       ) : null}
       <Grid container justifyContent="flex-end">
-        <Badge onClick={() => setOpen(!open)} badgeContent={2} color="primary">
+        <Badge
+          onClick={() => setOpen(!open)}
+          badgeContent={errors.length}
+          color="primary"
+        >
           <NotificationsNoneOutlinedIcon color="primary" />
         </Badge>
       </Grid>

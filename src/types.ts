@@ -30,6 +30,9 @@ export interface IFieldInfo extends Property {
   name: string;
 }
 export function getFields(schema: Schema): Array<IFieldInfo> {
+  if (!schema.properties) {
+    return [];
+  }
   const keys = Object.keys(schema.properties);
   keys.sort((k) => (k.toLowerCase().includes("date") ? 0 : 1));
   return keys.map((name) => {
