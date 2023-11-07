@@ -43,4 +43,34 @@ export class SchemaClient {
       return [data, ""];
     }
   }
+  async putItem<T>(itemsUrl: string, item: T): Promise<[T | null, string]> {
+    const res = await fetch(itemsUrl || "", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+    const data = await res.json();
+
+    if (data.errorMessage) {
+      this.addError(`[PUT ${itemsUrl}]: ${data.errorMessage}`);
+      return [null, data.errorMessage];
+    } else {
+      return [data, ""];
+    }
+  }
+
+  async deleteItem<T>(itemsUrl: string, data: T): Promise<[T | null, string]> {
+    const res = await fetch(itemsUrl || "", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const body = await res.json();
+    if (body.errorMessage) {
+      this.addError(`[DELETE ${itemsUrl}]: ${body.errorMessage}`);
+      return [null, body.errorMessage];
+    } else {
+      return [body, ""];
+    }
+  }
 }

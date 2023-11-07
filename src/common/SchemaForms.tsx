@@ -62,11 +62,11 @@ export function SchemaEditForm({
   row: any;
   noButtons?: boolean;
 }) {
-  const { config } = React.useContext(ConfigContext);
+  const { config, schemaClient } = React.useContext(ConfigContext);
   const [data, setData] = React.useState(row);
   const editable = columns.filter((c) => !c.readOnly);
 
-  if (!config || !config.itemsUrl) {
+  if (!config || !config.itemsUrl || !schemaClient) {
     return <div></div>;
   }
 
@@ -88,13 +88,13 @@ export function SchemaEditForm({
         <>
           <Button
             onClick={async (e) => {
-              const res = await fetch(config.itemsUrl || "", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-              });
-              const body = await res.json();
-              console.log("body", body);
+              const [item] = await schemaClient.putItem(
+                config.itemsUrl || "",
+                data,
+              );
+              if (item) {
+                setData(item);
+              }
             }}
             variant="contained"
             color="primary"
@@ -103,13 +103,7 @@ export function SchemaEditForm({
           </Button>
           <Button
             onClick={async (e) => {
-              const res = await fetch(config.itemsUrl || "", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-              });
-              const body = await res.json();
-              console.log("body", body);
+              await schemaClient.deleteItem(config.itemsUrl || "", data);
             }}
             variant="contained"
             color="secondary"
