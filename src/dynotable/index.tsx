@@ -18,6 +18,30 @@ export function DynoTablePage() {
   const config = configs.find((c) => c.name === configName);
 
   React.useEffect(() => {
+    document.title = config.name;
+    var myDynamicManifest = {
+      name: "Your Great Site",
+      short_name: "Site",
+      description: "Something dynamic",
+      start_url: "<your-url>",
+      background_color: "#000000",
+      theme_color: "#0f4a73",
+      icons: [
+        {
+          src: "whatever.png",
+          sizes: "256x256",
+          type: "image/png",
+        },
+      ],
+    };
+    const stringManifest = JSON.stringify(myDynamicManifest);
+    const blob = new Blob([stringManifest], { type: "application/json" });
+    const manifestURL = URL.createObjectURL(blob);
+    const manifest = document.querySelector("#manifest");
+    if (manifest) {
+      manifest.setAttribute("href", manifestURL);
+    }
+
     const fetchData = async () => {
       const client = new SchemaClient(config.schemaUrl);
       const [schema, errorMessage] = await client.getSchema();
@@ -40,7 +64,7 @@ export function DynoTablePage() {
     };
 
     fetchData();
-  }, [config.schemaUrl, config.itemsFilters, config.itemsUrl]);
+  }, [config.schemaUrl, config.itemsFilters, config.itemsUrl, config.name]);
 
   return (
     <div>
