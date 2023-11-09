@@ -14,11 +14,6 @@ export const ConfigContext = React.createContext<IConfigContext>({});
 const SAVED_CONFIGS_KEY = "savedConfigs";
 
 export function ConfigProvider({ children }) {
-  const [errors, setErrors] = React.useState<string[]>([]);
-  const addError = (e: string) => {
-    // setErrors([...errors, e]);
-  };
-
   let config: AppConfig | undefined = undefined;
   const { configName } = useParams();
   let schemaClient: SchemaClient | undefined = undefined;
@@ -68,7 +63,6 @@ export function ConfigProvider({ children }) {
       if (config && config.schemaUrl) {
         schemaClient = new SchemaClient({
           schemaUrl: config.schemaUrl,
-          addError,
         });
       }
     }
@@ -77,7 +71,7 @@ export function ConfigProvider({ children }) {
   }
   return (
     <ConfigContext.Provider value={{ config, schemaClient }}>
-      <ErrorCenter errors={errors} />
+      <ErrorCenter />
       {children}
     </ConfigContext.Provider>
   );

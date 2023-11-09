@@ -2,7 +2,7 @@ import { Schema } from "../types";
 
 export class SchemaClient {
   private schemaUrl: string;
-  private addError: (e: string) => void;
+  public addError: (e: string) => void;
 
   constructor({
     schemaUrl,
