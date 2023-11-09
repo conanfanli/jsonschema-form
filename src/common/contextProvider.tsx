@@ -2,6 +2,7 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { SchemaClient } from "../clients";
 import { AppConfig } from "../types";
+import { ErrorCenter } from "./ErrorCenter";
 
 interface IConfigContext {
   config?: AppConfig;
@@ -15,7 +16,7 @@ const SAVED_CONFIGS_KEY = "savedConfigs";
 export function ConfigProvider({ children }) {
   const [errors, setErrors] = React.useState<string[]>([]);
   const addError = (e: string) => {
-    setErrors([...errors, e]);
+    // setErrors([...errors, e]);
   };
 
   let config: AppConfig | undefined = undefined;
@@ -75,7 +76,8 @@ export function ConfigProvider({ children }) {
     console.error(error);
   }
   return (
-    <ConfigContext.Provider value={{ config, errors, schemaClient }}>
+    <ConfigContext.Provider value={{ config, schemaClient }}>
+      <ErrorCenter errors={errors} />
       {children}
     </ConfigContext.Provider>
   );

@@ -4,8 +4,7 @@ import Snackbar from "@mui/material/Snackbar";
 import { ConfigContext } from "./contextProvider";
 import { Badge, Alert, Box, Collapse, Grid } from "@mui/material";
 
-export function ErrorCenter() {
-  const { errors = [] } = React.useContext(ConfigContext);
+export function ErrorCenter({ errors }) {
   const [nextMessageIndex, setNextMessageIndex] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const toDisplay = errors[nextMessageIndex];
@@ -35,8 +34,8 @@ export function ErrorCenter() {
         timeout="auto"
         unmountOnExit
       >
-        {errors.map((e) => (
-          <Alert>{e}</Alert>
+        {errors.map((e, index) => (
+          <Alert key={index}>{e}</Alert>
         ))}
       </Collapse>
     </Box>

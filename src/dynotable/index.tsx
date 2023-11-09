@@ -34,6 +34,8 @@ export function DynoTablePage() {
 
       if (items && items.length) {
         setItems(items);
+      } else {
+        setItems([]);
       }
     };
 
