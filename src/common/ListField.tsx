@@ -21,7 +21,6 @@ export function ListField({ optionsUrl }: { optionsUrl?: string }) {
     };
     fetchData();
   }, [optionsUrl, schemaClient]);
-  // defaultValue={[options[0]]}
   return (
     <Stack spacing={3} sx={{ width: 500 }}>
       <Autocomplete
