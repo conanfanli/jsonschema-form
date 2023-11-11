@@ -28,7 +28,7 @@ export function ListField({ optionsUrl }: { optionsUrl?: string }) {
         multiple
         id="tags-standard"
         options={options}
-        getOptionLabel={(option) => option.tag_name}
+        getOptionLabel={(option) => option.name}
         renderInput={(params) => (
           <TextField
             {...params}
