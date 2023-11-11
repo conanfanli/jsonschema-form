@@ -7,18 +7,19 @@ type FieldType =
   | "null"
   | "enum";
 export interface Property {
-  type: FieldType;
-  title?: string;
-  required: string[];
-  readOnly?: boolean;
-  is_hidden?: boolean;
-  freeze_after_creation?: boolean;
-  format?: string;
-  properties?: { [key: string]: Property };
-  anyOf?: any[];
-  allOf?: any[];
   $ref?: Schema;
+  allOf?: any[];
+  anyOf?: any[];
+  auto_complete?: string;
+  format?: string;
+  freeze_after_creation?: boolean;
+  is_hidden?: boolean;
   nullable?: boolean;
+  properties?: { [key: string]: Property };
+  readOnly?: boolean;
+  required: string[];
+  title?: string;
+  type: FieldType;
 }
 export interface Schema {
   type: FieldType;

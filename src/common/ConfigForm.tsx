@@ -18,6 +18,7 @@ function saveConfig(saved: AppConfig[], newConfig: AppConfig) {
   localStorage.setItem("savedConfigs", JSON.stringify(newOptions));
   return newOptions;
 }
+
 function removeConfig(saved: AppConfig[], toRemove: AppConfig) {
   const newOptions = saved.filter((config) => config.name !== toRemove.name);
   localStorage.setItem("savedConfigs", JSON.stringify(newOptions));

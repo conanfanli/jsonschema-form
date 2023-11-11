@@ -67,7 +67,7 @@ export function ConfigProvider({ children }) {
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error(`error when loading saved configs  ${error}`);
   }
   return (
     <ConfigContext.Provider value={{ config, schemaClient }}>

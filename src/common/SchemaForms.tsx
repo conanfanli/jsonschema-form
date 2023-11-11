@@ -11,6 +11,7 @@ import {
 import { Box } from "@mui/system";
 import { getFields, IFieldInfo, Schema } from "../types";
 import { ConfigContext } from "./contextProvider";
+import { ListField } from "./ListField";
 
 export function SchemaCreateForm({
   schema,
@@ -181,6 +182,8 @@ function EditField({
         inputType = "datetime-local";
       }
       break;
+    case "array":
+      return <ListField optionsUrl={fieldInfo.auto_complete} />;
     default:
       console.error("cannot decided input field for", fieldInfo);
       break;
@@ -188,8 +191,7 @@ function EditField({
   return (
     <TextField
       sx={{ m: 0.5 }}
-      size="small"
-      variant="standard"
+      variant="filled"
       fullWidth
       helperText={fieldInfo.title || fieldInfo.name}
       value={value || ""}
