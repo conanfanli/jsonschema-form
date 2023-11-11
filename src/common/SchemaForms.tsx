@@ -80,7 +80,14 @@ export function SchemaEditForm({
           fieldInfo={col}
           value={data[col.name]}
           onChange={(newValue) => {
-            console.log("change", newValue);
+            console.log(
+              "change field",
+              col.name,
+              " from ",
+              data[col.name],
+              " to ",
+              newValue,
+            );
             setData({ ...data, [col.name]: newValue });
           }}
         />
@@ -167,7 +174,7 @@ function EditField({
         <FormControlLabel
           control={
             <Checkbox
-              value={value}
+              value={value || []}
               onChange={(e) => onChange(e.target.value)}
             />
           }
@@ -183,7 +190,13 @@ function EditField({
       }
       break;
     case "array":
-      return <ListField optionsUrl={fieldInfo.auto_complete} />;
+      return (
+        <ListField
+          value={value}
+          optionsUrl={fieldInfo.auto_complete}
+          onChange={(newValue) => onChange(newValue)}
+        />
+      );
     default:
       console.error("cannot decided input field for", fieldInfo);
       break;
