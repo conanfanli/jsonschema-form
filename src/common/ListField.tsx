@@ -29,10 +29,11 @@ export function ListField({
     fetchData();
   }, [optionsUrl, schemaClient]);
   return (
-    <Stack spacing={3} sx={{ width: 500 }}>
+    <Stack spacing={3}>
       <Autocomplete
+        fullWidth
         multiple
-        onChange={(event, newValue: string[]) => {
+        onChange={(_, newValue: string[]) => {
           console.log("onChange", newValue);
           onChange(newValue);
         }}

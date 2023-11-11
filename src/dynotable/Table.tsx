@@ -26,19 +26,16 @@ function formatField(
     return fieldValue.toString();
   }
 
-  // TODO: Display a link for array fields?
-  // Probably not a right generic approach
   if (fieldType === "array") {
     return fieldValue.map((item, index) => (
-      <Link
+      <div
         key={index}
-        component="button"
         onClick={() =>
           mergeFilter({ [columnName]: { operator: "contains", value: item } })
         }
       >
-        {JSON.stringify(item)}
-      </Link>
+        {typeof item === "string" ? item : JSON.stringify(item)}
+      </div>
     ));
   }
 
@@ -54,11 +51,13 @@ function Row({
   columns,
   row,
   schema,
+  onChange,
   mergeFilter,
 }: {
   columns: IFieldInfo[];
   row: any;
   schema: Schema;
+  onChange: (v) => void;
   mergeFilter: (f: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -82,7 +81,12 @@ function Row({
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Expansion columns={columns} open={open} row={row} />
+          <Expansion
+            onChange={onChange}
+            schema={schema}
+            open={open}
+            row={row}
+          />
         </TableCell>
       </TableRow>
     </React.Fragment>
@@ -93,10 +97,12 @@ export function SchemaTable({
   schema,
   items,
   mergeFilter = () => {},
+  onChange,
 }: {
   schema: Schema;
   items: any[];
   mergeFilter?: (any) => void;
+  onChange: (v) => void;
 }) {
   const columns = getFields(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);
@@ -115,6 +121,7 @@ export function SchemaTable({
         <TableBody>
           {items.map((row, i: number) => (
             <Row
+              onChange={onChange}
               mergeFilter={mergeFilter}
               key={i}
               columns={columns}

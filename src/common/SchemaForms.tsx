@@ -13,59 +13,20 @@ import { getFields, IFieldInfo, Schema } from "../types";
 import { ConfigContext } from "./contextProvider";
 import { ListField } from "./ListField";
 
-export function SchemaCreateForm({
-  schema,
-  submitUrl,
-}: {
-  schema: Schema;
-  submitUrl: string;
-}) {
-  const [data, setData] = React.useState({});
-  const writableFields = getFields(schema).filter((f) => !f.readOnly);
-  return (
-    <Box>
-      <Typography variant="h4">{schema.title}</Typography>
-      {writableFields.map((f) => (
-        <EditField
-          creationMode={true}
-          key={f.name}
-          fieldInfo={f}
-          value={data[f.name] || ""}
-          onChange={(newValue) => {
-            setData({ ...data, [f.name]: newValue });
-          }}
-        />
-      ))}
-      <Button
-        onClick={async (e) => {
-          const res = await fetch(submitUrl, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-          const body = await res.json();
-          console.log("body", body);
-        }}
-        variant="contained"
-        color="primary"
-      >
-        Submit
-      </Button>
-    </Box>
-  );
-}
 export function SchemaEditForm({
-  columns,
+  schema,
   row,
   noButtons = false,
+  onChange,
 }: {
-  columns: IFieldInfo[];
+  schema: Schema;
   row: any;
   noButtons?: boolean;
+  onChange: (v: any) => void;
 }) {
+  const isEditMode = !!row && Object.keys(row).length > 0;
   const { config, schemaClient } = React.useContext(ConfigContext);
-  const [data, setData] = React.useState(row);
-  const editable = columns.filter((c) => !c.readOnly);
+  const editable = getFields(schema).filter((c) => !c.readOnly);
 
   if (!config || !config.itemsUrl || !schemaClient) {
     return <div></div>;
@@ -73,22 +34,26 @@ export function SchemaEditForm({
 
   return (
     <Box>
+      {!isEditMode ? (
+        <Typography variant="h4">{schema.title}</Typography>
+      ) : null}
       {editable.map((col) => (
         <EditField
-          creationMode={false}
+          schema={schema}
+          isEditMode={isEditMode}
           key={col.name}
           fieldInfo={col}
-          value={data[col.name]}
+          value={row ? row[col.name] : ""}
           onChange={(newValue) => {
             console.log(
               "change field",
               col.name,
               " from ",
-              data[col.name],
+              row ? row[col.name] : "",
               " to ",
               newValue,
             );
-            setData({ ...data, [col.name]: newValue });
+            onChange({ ...row, [col.name]: newValue });
           }}
         />
       ))}
@@ -98,10 +63,10 @@ export function SchemaEditForm({
             onClick={async (e) => {
               const [item] = await schemaClient.putItem(
                 config.itemsUrl || "",
-                data,
+                row,
               );
               if (item) {
-                setData(item);
+                onChange(item);
               }
             }}
             variant="contained"
@@ -111,7 +76,7 @@ export function SchemaEditForm({
           </Button>
           <Button
             onClick={async (e) => {
-              await schemaClient.deleteItem(config.itemsUrl || "", data);
+              await schemaClient.deleteItem(config.itemsUrl || "", row);
             }}
             variant="contained"
             color="secondary"
@@ -125,14 +90,16 @@ export function SchemaEditForm({
 }
 
 function EditField({
+  schema,
   fieldInfo,
   value,
-  creationMode,
+  isEditMode,
   onChange,
 }: {
+  schema: Schema;
   fieldInfo: IFieldInfo;
   value: any;
-  creationMode: boolean;
+  isEditMode: boolean;
   onChange: (any) => void;
 }) {
   let inputType = "text";
@@ -158,7 +125,8 @@ function EditField({
             >
               <Box sx={{ ml: 4 }}>
                 <SchemaEditForm
-                  columns={getFields(fieldInfo.$ref)}
+                  onChange={onChange}
+                  schema={schema}
                   row={value || {}}
                   noButtons
                 />
@@ -201,6 +169,9 @@ function EditField({
       console.error("cannot decided input field for", fieldInfo);
       break;
   }
+  if (isEditMode && fieldInfo.freeze_after_creation) {
+    return null;
+  }
   return (
     <TextField
       sx={{ m: 0.5 }}
@@ -208,7 +179,6 @@ function EditField({
       fullWidth
       helperText={fieldInfo.title || fieldInfo.name}
       value={value || ""}
-      disabled={!creationMode && fieldInfo.freeze_after_creation}
       onChange={(e) => onChange(e.target.value)}
       type={inputType}
     />

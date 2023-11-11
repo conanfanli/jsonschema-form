@@ -39,6 +39,9 @@ export function getFields(schema: Schema): Array<IFieldInfo> {
   return keys.map((name) => {
     const field = schema.properties[name];
     let type: FieldType = field.type;
+    if (name === "id") {
+      field.is_hidden = true;
+    }
     if (!field.type) {
       // e.g. hash_key: {allOf: [{$ref: "#/$defs/Field"}]}
       if (field.allOf) {

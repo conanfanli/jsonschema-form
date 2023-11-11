@@ -1,13 +1,13 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { ConfigContext } from "../common/contextProvider";
-import { SchemaCreateForm } from "../common/SchemaForms";
+import { SchemaEditForm } from "../common/SchemaForms";
 import { Schema } from "../types";
 import { SchemaTable } from "./Table";
 export { SchemaTable } from "./Table";
 export { EventLogDataGrid } from "./DataGrid";
 
-export function DynoTablePage() {
+export function DynoPage() {
   const { configName } = useParams();
 
   const { schemaClient } = React.useContext(ConfigContext);
@@ -48,12 +48,24 @@ export function DynoTablePage() {
     schemaClient,
   ]);
 
-  return (
+  function replaceItem(newRow) {
+    const newItems = items.map((item) => {
+      if (item.id === newRow.id) {
+        console.log(newRow);
+        return newRow;
+      }
+      return item;
+    });
+    setItems(newItems);
+  }
+  return schema ? (
     <div>
-      {schema ? (
-        <SchemaCreateForm schema={schema} submitUrl={config.itemsUrl} />
-      ) : null}
-      <div>{schema ? <SchemaTable schema={schema} items={items} /> : null}</div>
+      <SchemaEditForm
+        schema={schema}
+        onChange={(newRow) => setItems([...items, newRow])}
+        row={null}
+      />
+      <SchemaTable onChange={replaceItem} schema={schema} items={items} />
     </div>
-  );
+  ) : null;
 }
