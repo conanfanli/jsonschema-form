@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Grid, Typography } from "@mui/material";
@@ -25,6 +26,8 @@ export function EditModal({
   replaceItem: (v: any) => void;
 }) {
   const isEditMode = !!focusedRow && !!focusedRow.id;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleClickOpen = () => {
     setFocusedRow({});
@@ -47,7 +50,11 @@ export function EditModal({
         </Grid>
       </Grid>
       {focusedRow ? (
-        <Dialog open={!!focusedRow} onClose={handleClose}>
+        <Dialog
+          open={!!focusedRow}
+          onClose={handleClose}
+          fullScreen={fullScreen}
+        >
           <DialogTitle>{isEditMode ? "Editing" : "Creating"}</DialogTitle>
           <DialogContent>
             <Box sx={{ margin: 1 }}>
@@ -77,11 +84,9 @@ export function EditModal({
                   />
                 )}
               </Typography>
+              <Button onClick={handleClose}>Cancel</Button>
             </Box>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
         </Dialog>
       ) : null}
     </React.Fragment>
