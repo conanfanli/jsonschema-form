@@ -24,10 +24,6 @@ export function EditModal({
   addNewRow: (v: any) => void;
   replaceItem: (v: any) => void;
 }) {
-  if (!focusedRow) {
-    return null;
-  }
-
   const isEditMode = !!focusedRow && !!focusedRow.id;
 
   const handleClickOpen = () => {
@@ -50,42 +46,44 @@ export function EditModal({
           <ErrorCenter />
         </Grid>
       </Grid>
-      <Dialog open={!!focusedRow} onClose={handleClose}>
-        <DialogTitle>{isEditMode ? "Editing" : "Creating"}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ margin: 1 }}>
-            <Typography variant="h6" gutterBottom component="div">
-              Tags
-              {isEditMode ? (
-                <EditForm
-                  onChange={setFocusedRow}
-                  schema={schema}
-                  row={focusedRow}
-                  onSubmitItem={(newItem) => {
-                    replaceItem(newItem);
-                    handleClose();
-                  }}
-                  onDeleteItem={(r) => {
-                    onDeleteItem(r);
-                    handleClose();
-                  }}
-                />
-              ) : (
-                <CreateForm
-                  schema={schema}
-                  addNewRow={(r) => {
-                    addNewRow(r);
-                    handleClose();
-                  }}
-                />
-              )}
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+      {focusedRow ? (
+        <Dialog open={!!focusedRow} onClose={handleClose}>
+          <DialogTitle>{isEditMode ? "Editing" : "Creating"}</DialogTitle>
+          <DialogContent>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="h6" gutterBottom component="div">
+                Tags
+                {isEditMode ? (
+                  <EditForm
+                    onChange={setFocusedRow}
+                    schema={schema}
+                    row={focusedRow}
+                    onSubmitItem={(newItem) => {
+                      replaceItem(newItem);
+                      handleClose();
+                    }}
+                    onDeleteItem={(r) => {
+                      onDeleteItem(r);
+                      handleClose();
+                    }}
+                  />
+                ) : (
+                  <CreateForm
+                    schema={schema}
+                    addNewRow={(r) => {
+                      addNewRow(r);
+                      handleClose();
+                    }}
+                  />
+                )}
+              </Typography>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </React.Fragment>
   );
 }
