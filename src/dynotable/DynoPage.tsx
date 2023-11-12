@@ -73,12 +73,15 @@ export function DynoPage() {
         schema={schema}
         setFocusedRow={setFocusedRow}
         addNewRow={addNewRow}
+        replaceItem={replaceItem}
       />
       <SchemaTable
         items={items}
         onChange={replaceItem}
         onDeleteItem={deleteRow}
-        onFocus={(row) => setFocusedRow(row)}
+        selectForEdit={(id: string) =>
+          setFocusedRow(items.filter((item) => item.id === id)[0])
+        }
         schema={schema}
       />
     </div>

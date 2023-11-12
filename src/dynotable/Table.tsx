@@ -13,13 +13,13 @@ export function SchemaTable({
   items,
   onChange,
   onDeleteItem,
-  onFocus,
+  selectForEdit,
 }: {
   schema: Schema;
   items: any[];
   onChange: (v) => void;
   onDeleteItem: (v) => void;
-  onFocus: (r) => void;
+  selectForEdit: (id: string) => void;
 }) {
   const columns = getFields(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);
@@ -39,9 +39,7 @@ export function SchemaTable({
         <TableBody>
           {items.map((row) => (
             <Row
-              onFocus={onFocus}
-              onDeleteItem={onDeleteItem}
-              onChange={onChange}
+              selectForEdit={selectForEdit}
               key={row.id}
               columns={columns}
               row={row}
@@ -88,23 +86,19 @@ function Row({
   columns,
   row,
   schema,
-  onChange,
-  onDeleteItem,
-  onFocus,
+  selectForEdit,
 }: {
   columns: IFieldInfo[];
   row?: any;
   schema: Schema;
-  onChange: (v) => void;
-  onDeleteItem: (v) => void;
-  onFocus: (r) => void;
+  selectForEdit: (id: string) => void;
 }) {
   const visibleColumns = columns.filter((f) => !f.is_hidden);
   return (
     <React.Fragment>
       <TableRow
         sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
-        onClick={() => onFocus(row)}
+        onClick={() => selectForEdit(row.id)}
       >
         {visibleColumns.map((c, index: number) => {
           const formatted = formatField(row, c.name, schema.properties[c.name]);

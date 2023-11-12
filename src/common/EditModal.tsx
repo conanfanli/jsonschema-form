@@ -15,17 +15,20 @@ export function EditModal({
   setFocusedRow,
   onDeleteItem,
   addNewRow,
+  replaceItem,
 }: {
   schema: Schema;
   focusedRow: any;
   setFocusedRow: (v: any) => void;
   onDeleteItem: (v: any) => void;
   addNewRow: (v: any) => void;
+  replaceItem: (v: any) => void;
 }) {
   if (!focusedRow) {
     return null;
   }
 
+  console.log("focus", focusedRow);
   const isEditMode = !!focusedRow && !!focusedRow.id;
 
   const handleClickOpen = () => {
@@ -59,7 +62,10 @@ export function EditModal({
                   onChange={setFocusedRow}
                   schema={schema}
                   row={focusedRow}
-                  onSubmitItem={() => handleClose()}
+                  onSubmitItem={(newItem) => {
+                    replaceItem(newItem);
+                    handleClose();
+                  }}
                   onDeleteItem={(r) => {
                     onDeleteItem(r);
                     handleClose();
