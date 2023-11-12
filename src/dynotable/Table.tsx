@@ -9,14 +9,13 @@ import Paper from "@mui/material/Paper";
 import { getFields, IFieldInfo, Property, Schema } from "../types";
 import { Expansion } from "./Expansion";
 
-function formatField(
-  obj,
-  columnName: string,
-  fieldInfo: Property,
-  mergeFilter: (added: any) => void,
-) {
+function formatField(obj, columnName: string, fieldInfo: Property) {
   const fieldType = fieldInfo.type;
   const fieldValue = obj[columnName];
+  if (!fieldValue) {
+    return "";
+  }
+
   if (["string", "integer", "null"].includes(fieldType)) {
     return fieldValue;
   }
@@ -27,12 +26,7 @@ function formatField(
 
   if (fieldType === "array") {
     return fieldValue.map((item, index) => (
-      <div
-        key={index}
-        onClick={() =>
-          mergeFilter({ [columnName]: { operator: "contains", value: item } })
-        }
-      >
+      <div key={index}>
         {typeof item === "string" ? item : JSON.stringify(item)}
       </div>
     ));
@@ -51,13 +45,11 @@ function Row({
   row,
   schema,
   onChange,
-  mergeFilter,
 }: {
   columns: IFieldInfo[];
-  row: any;
+  row?: any;
   schema: Schema;
   onChange: (v) => void;
-  mergeFilter: (f: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -69,12 +61,7 @@ function Row({
         onClick={() => setOpen(!open)}
       >
         {visibleColumns.map((c, index: number) => {
-          const formatted = formatField(
-            row,
-            c.name,
-            schema.properties[c.name],
-            mergeFilter,
-          );
+          const formatted = formatField(row, c.name, schema.properties[c.name]);
           return <TableCell key={c.name}>{formatted}</TableCell>;
         })}
       </TableRow>
@@ -95,12 +82,10 @@ function Row({
 export function SchemaTable({
   schema,
   items,
-  mergeFilter = () => {},
   onChange,
 }: {
   schema: Schema;
   items: any[];
-  mergeFilter?: (any) => void;
   onChange: (v) => void;
 }) {
   const columns = getFields(schema);
@@ -121,7 +106,6 @@ export function SchemaTable({
           {items.map((row, i: number) => (
             <Row
               onChange={onChange}
-              mergeFilter={mergeFilter}
               key={i}
               columns={columns}
               row={row}
