@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import { ConfigContext } from "../common/contextProvider";
 import { EditModal } from "../common/EditModal";
 import { Schema } from "../types";
-import { SchemaTable } from "./Table";
-export { SchemaTable } from "./Table";
+import { DynoTable } from "./Table";
 
 export function DynoPage() {
   const { configName } = useParams();
@@ -75,10 +74,8 @@ export function DynoPage() {
         addNewRow={addNewRow}
         replaceItem={replaceItem}
       />
-      <SchemaTable
+      <DynoTable
         items={items}
-        onChange={replaceItem}
-        onDeleteItem={deleteRow}
         selectForEdit={(id: string) =>
           setFocusedRow(items.filter((item) => item.id === id)[0])
         }
