@@ -9,7 +9,7 @@ function Root() {
   return (
     <>
       <ConfigProvider>
-        <div style={{ margin: "1ch" }} id="detail">
+        <div style={{ margin: ".1ch" }}>
           <Outlet />
         </div>
       </ConfigProvider>
