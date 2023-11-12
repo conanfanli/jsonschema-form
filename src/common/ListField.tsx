@@ -1,8 +1,11 @@
 import * as React from "react";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import { ConfigContext } from "./contextProvider";
+
+const filter = createFilterOptions<string>();
 
 export function ListField({
   optionsUrl,
@@ -28,13 +31,16 @@ export function ListField({
     };
     fetchData();
   }, [optionsUrl, schemaClient]);
+  if (options.length === 0) {
+    return <div>loading..</div>;
+  }
   return (
     <Stack spacing={3}>
       <Autocomplete
         fullWidth
         multiple
         onChange={(_, newValue: string[]) => {
-          onChange(newValue);
+          onChange(newValue.map((item) => item.replace(/^\+ /, "")));
         }}
         value={value || []}
         options={options}
@@ -42,7 +48,22 @@ export function ListField({
         renderInput={(params) => (
           <TextField {...params} variant="standard" label="Tags" />
         )}
+        filterOptions={(options: string[], params) => {
+          // Return which ones to display
+          const filtered = filter(options, params);
+
+          const { inputValue } = params;
+          // Suggest the creation of a new value
+          const isExisting = options.some((option) => inputValue === option);
+          if (inputValue !== "" && !isExisting) {
+            filtered.push(`+ ${inputValue}`);
+          }
+
+          return filtered;
+        }}
       />
     </Stack>
   );
 }
+/*
+ */
