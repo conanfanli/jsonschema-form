@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { ConfigContext } from "../common/contextProvider";
-import { SchemaEditForm } from "../common/SchemaForms";
+import { CreateForm } from "../common/SchemaForms";
 import { Schema } from "../types";
 import { SchemaTable } from "./Table";
 export { SchemaTable } from "./Table";
@@ -13,7 +13,6 @@ export function DynoPage() {
   const { schemaClient } = React.useContext(ConfigContext);
   const [schema, setSchema] = React.useState<Schema | null>(null);
   const [items, setItems] = React.useState<any[]>([]);
-  const [newRow, setNewRow] = React.useState({});
 
   const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
   const config = configs.find((c) => c.name === configName);
@@ -59,14 +58,21 @@ export function DynoPage() {
     });
     setItems(newItems);
   }
+  function addNewRow(newRow) {
+    setItems([newRow, ...items]);
+  }
+  function deleteRow(row) {
+    setItems(items.filter((item) => item.id !== row.id));
+  }
   return schema ? (
     <div>
-      <SchemaEditForm
+      <CreateForm schema={schema} addNewRow={addNewRow} />
+      <SchemaTable
+        onChange={replaceItem}
         schema={schema}
-        onChange={(newRow) => setNewRow(newRow)}
-        row={newRow}
+        items={items}
+        onDeleteItem={deleteRow}
       />
-      <SchemaTable onChange={replaceItem} schema={schema} items={items} />
     </div>
   ) : null;
 }

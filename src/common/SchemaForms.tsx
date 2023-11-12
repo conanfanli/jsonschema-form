@@ -13,16 +13,43 @@ import { getFields, IFieldInfo, Schema } from "../types";
 import { ConfigContext } from "./contextProvider";
 import { ListField } from "./ListField";
 
-export function SchemaEditForm({
+export function CreateForm({
+  schema,
+  addNewRow,
+}: {
+  schema: Schema;
+  addNewRow: (r: any) => void;
+}) {
+  const [newRow, setNewRow] = React.useState({});
+  return (
+    <EditForm
+      row={newRow}
+      onChange={(newRow) => {
+        setNewRow(newRow);
+      }}
+      onSubmitItem={(r) => {
+        addNewRow(r);
+        setNewRow({});
+      }}
+      onDeleteItem={() => {}}
+      schema={schema}
+    />
+  );
+}
+export function EditForm({
   schema,
   row,
   noButtons = false,
   onChange,
+  onSubmitItem = () => {},
+  onDeleteItem,
 }: {
   schema: Schema;
   row: any;
   noButtons?: boolean;
   onChange: (v: any) => void;
+  onSubmitItem?: (v: any) => void;
+  onDeleteItem: (v: any) => void;
 }) {
   const isEditMode = !!row && Object.keys(row).length > 0;
   const { config, schemaClient } = React.useContext(ConfigContext);
@@ -32,6 +59,18 @@ export function SchemaEditForm({
     return <div></div>;
   }
 
+  const onSubmit = async () => {
+    const [item] = await schemaClient.putItem(config.itemsUrl || "", row);
+    if (item) {
+      onSubmitItem(item);
+    }
+  };
+  const onDelete = async () => {
+    const [res] = await schemaClient.deleteItem(config.itemsUrl || "", row);
+    if (res) {
+      onDeleteItem(row);
+    }
+  };
   return (
     <Box>
       {!isEditMode ? (
@@ -45,42 +84,16 @@ export function SchemaEditForm({
           fieldInfo={col}
           value={row ? row[col.name] : ""}
           onChange={(newValue) => {
-            console.log(
-              "change field",
-              col.name,
-              " from ",
-              row ? row[col.name] : "",
-              " to ",
-              newValue,
-            );
             onChange({ ...row, [col.name]: newValue });
           }}
         />
       ))}
       {!noButtons ? (
         <>
-          <Button
-            onClick={async (e) => {
-              const [item] = await schemaClient.putItem(
-                config.itemsUrl || "",
-                row,
-              );
-              if (item) {
-                onChange(item);
-              }
-            }}
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={onSubmit} variant="contained" color="primary">
             Submit
           </Button>
-          <Button
-            onClick={async (e) => {
-              await schemaClient.deleteItem(config.itemsUrl || "", row);
-            }}
-            variant="contained"
-            color="secondary"
-          >
+          <Button onClick={onDelete} variant="contained" color="secondary">
             Delete
           </Button>{" "}
         </>
@@ -95,12 +108,14 @@ function EditField({
   value,
   isEditMode,
   onChange,
+  onDeleteItem = () => {},
 }: {
   schema: Schema;
   fieldInfo: IFieldInfo;
   value: any;
   isEditMode: boolean;
   onChange: (any) => void;
+  onDeleteItem?: (v: any) => void;
 }) {
   let inputType = "text";
   const [open, setOpen] = React.useState(false);
@@ -124,7 +139,8 @@ function EditField({
               unmountOnExit
             >
               <Box sx={{ ml: 4 }}>
-                <SchemaEditForm
+                <EditForm
+                  onDeleteItem={onDeleteItem}
                   onChange={onChange}
                   schema={schema}
                   row={value || {}}

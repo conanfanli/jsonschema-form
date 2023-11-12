@@ -34,7 +34,6 @@ export function ListField({
         fullWidth
         multiple
         onChange={(_, newValue: string[]) => {
-          console.log("onChange", newValue);
           onChange(newValue);
         }}
         value={value || []}

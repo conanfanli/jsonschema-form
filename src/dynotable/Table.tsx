@@ -45,11 +45,13 @@ function Row({
   row,
   schema,
   onChange,
+  onDeleteItem,
 }: {
   columns: IFieldInfo[];
   row?: any;
   schema: Schema;
   onChange: (v) => void;
+  onDeleteItem: (v) => void;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -57,7 +59,7 @@ function Row({
   return (
     <React.Fragment>
       <TableRow
-        sx={{ "& > *": { borderBottom: "unset" } }}
+        sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
         onClick={() => setOpen(!open)}
       >
         {visibleColumns.map((c, index: number) => {
@@ -68,6 +70,7 @@ function Row({
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Expansion
+            onDeleteItem={onDeleteItem}
             onChange={onChange}
             schema={schema}
             open={open}
@@ -83,10 +86,12 @@ export function SchemaTable({
   schema,
   items,
   onChange,
+  onDeleteItem,
 }: {
   schema: Schema;
   items: any[];
   onChange: (v) => void;
+  onDeleteItem: (v) => void;
 }) {
   const columns = getFields(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);
@@ -105,6 +110,7 @@ export function SchemaTable({
         <TableBody>
           {items.map((row, i: number) => (
             <Row
+              onDeleteItem={onDeleteItem}
               onChange={onChange}
               key={i}
               columns={columns}
