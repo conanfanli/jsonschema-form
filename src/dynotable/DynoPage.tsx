@@ -13,6 +13,7 @@ export function DynoPage() {
   const { schemaClient } = React.useContext(ConfigContext);
   const [schema, setSchema] = React.useState<Schema | null>(null);
   const [items, setItems] = React.useState<any[]>([]);
+  const [newRow, setNewRow] = React.useState({});
 
   const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
   const config = configs.find((c) => c.name === configName);
@@ -62,8 +63,8 @@ export function DynoPage() {
     <div>
       <SchemaEditForm
         schema={schema}
-        onChange={(newRow) => setItems([...items, newRow])}
-        row={null}
+        onChange={(newRow) => setNewRow(newRow)}
+        row={newRow}
       />
       <SchemaTable onChange={replaceItem} schema={schema} items={items} />
     </div>
