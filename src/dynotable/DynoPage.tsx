@@ -1,17 +1,17 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { ConfigContext } from "../common/contextProvider";
-import { CreateForm } from "../common/SchemaForms";
+import { EditModal } from "../common/EditModal";
 import { Schema } from "../types";
 import { SchemaTable } from "./Table";
 export { SchemaTable } from "./Table";
-export { EventLogDataGrid } from "./DataGrid";
 
 export function DynoPage() {
   const { configName } = useParams();
 
   const { schemaClient } = React.useContext(ConfigContext);
   const [schema, setSchema] = React.useState<Schema | null>(null);
+  const [focusedRow, setFocusedRow] = React.useState<any>(null);
   const [items, setItems] = React.useState<any[]>([]);
 
   const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
@@ -64,14 +64,22 @@ export function DynoPage() {
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));
   }
+
   return schema ? (
     <div>
-      <CreateForm schema={schema} addNewRow={addNewRow} />
-      <SchemaTable
-        onChange={replaceItem}
-        schema={schema}
-        items={items}
+      <EditModal
+        focusedRow={focusedRow}
         onDeleteItem={deleteRow}
+        schema={schema}
+        setFocusedRow={setFocusedRow}
+        addNewRow={addNewRow}
+      />
+      <SchemaTable
+        items={items}
+        onChange={replaceItem}
+        onDeleteItem={deleteRow}
+        onFocus={(row) => setFocusedRow(row)}
+        schema={schema}
       />
     </div>
   ) : null;

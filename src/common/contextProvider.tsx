@@ -2,7 +2,6 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { SchemaClient } from "../clients";
 import { AppConfig } from "../types";
-import { ErrorCenter } from "./ErrorCenter";
 
 interface IConfigContext {
   config?: AppConfig;
@@ -71,7 +70,6 @@ export function ConfigProvider({ children }) {
   }
   return (
     <ConfigContext.Provider value={{ config, schemaClient }}>
-      <ErrorCenter />
       {children}
     </ConfigContext.Provider>
   );

@@ -51,7 +51,7 @@ export function EditForm({
   onSubmitItem?: (v: any) => void;
   onDeleteItem: (v: any) => void;
 }) {
-  const isEditMode = !!row && Object.keys(row).length > 0;
+  const isEditMode = !!row && !!row.id;
   const { config, schemaClient } = React.useContext(ConfigContext);
   const editable = getFields(schema).filter((c) => !c.readOnly);
 

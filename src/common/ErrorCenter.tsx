@@ -28,26 +28,30 @@ export function ErrorCenter() {
           message={toDisplay}
         />
       ) : null}
-      <Grid container justifyContent="flex-end">
-        <Badge
-          sx={{ m: 1 }}
-          onClick={() => setOpen(!open)}
-          badgeContent={errors.length}
-          color="primary"
-        >
-          <NotificationsNoneOutlinedIcon color="primary" />
-        </Badge>
+      <Grid container justifyContent="end">
+        <Grid item md={11.5}>
+          <Collapse
+            style={{ marginTop: "1ch" }}
+            in={open}
+            timeout="auto"
+            unmountOnExit
+          >
+            {errors.map((e, index) => (
+              <Alert key={index}>{e}</Alert>
+            ))}
+          </Collapse>
+        </Grid>
+        <Grid item md={0.4}>
+          <Badge
+            sx={{ m: 1 }}
+            onClick={() => setOpen(!open)}
+            badgeContent={errors.length}
+            color="primary"
+          >
+            <NotificationsNoneOutlinedIcon color="primary" />
+          </Badge>
+        </Grid>
       </Grid>
-      <Collapse
-        style={{ marginTop: "1ch" }}
-        in={open}
-        timeout="auto"
-        unmountOnExit
-      >
-        {errors.map((e, index) => (
-          <Alert key={index}>{e}</Alert>
-        ))}
-      </Collapse>
     </Box>
   );
 }

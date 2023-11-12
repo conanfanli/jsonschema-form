@@ -7,8 +7,52 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getFields, IFieldInfo, Property, Schema } from "../types";
-import { Expansion } from "./Expansion";
 
+export function SchemaTable({
+  schema,
+  items,
+  onChange,
+  onDeleteItem,
+  onFocus,
+}: {
+  schema: Schema;
+  items: any[];
+  onChange: (v) => void;
+  onDeleteItem: (v) => void;
+  onFocus: (r) => void;
+}) {
+  const columns = getFields(schema);
+  const visibleColumns = columns.filter((f) => !f.is_hidden);
+
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            {visibleColumns.map((column) => (
+              <TableCell key={column.name}>
+                {column?.title || column.name}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {items.map((row) => (
+            <Row
+              onFocus={onFocus}
+              onDeleteItem={onDeleteItem}
+              onChange={onChange}
+              key={row.id}
+              columns={columns}
+              row={row}
+              schema={schema}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
 function formatField(obj, columnName: string, fieldInfo: Property) {
   const fieldType = fieldInfo.type;
   const fieldValue = obj[columnName];
@@ -46,80 +90,27 @@ function Row({
   schema,
   onChange,
   onDeleteItem,
+  onFocus,
 }: {
   columns: IFieldInfo[];
   row?: any;
   schema: Schema;
   onChange: (v) => void;
   onDeleteItem: (v) => void;
+  onFocus: (r) => void;
 }) {
-  const [open, setOpen] = React.useState(false);
-
   const visibleColumns = columns.filter((f) => !f.is_hidden);
   return (
     <React.Fragment>
       <TableRow
         sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
-        onClick={() => setOpen(!open)}
+        onClick={() => onFocus(row)}
       >
         {visibleColumns.map((c, index: number) => {
           const formatted = formatField(row, c.name, schema.properties[c.name]);
           return <TableCell key={c.name}>{formatted}</TableCell>;
         })}
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Expansion
-            onDeleteItem={onDeleteItem}
-            onChange={onChange}
-            schema={schema}
-            open={open}
-            row={row}
-          />
-        </TableCell>
-      </TableRow>
     </React.Fragment>
-  );
-}
-
-export function SchemaTable({
-  schema,
-  items,
-  onChange,
-  onDeleteItem,
-}: {
-  schema: Schema;
-  items: any[];
-  onChange: (v) => void;
-  onDeleteItem: (v) => void;
-}) {
-  const columns = getFields(schema);
-  const visibleColumns = columns.filter((f) => !f.is_hidden);
-  return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            {visibleColumns.map((column) => (
-              <TableCell key={column.name}>
-                {column?.title || column.name}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {items.map((row, i: number) => (
-            <Row
-              onDeleteItem={onDeleteItem}
-              onChange={onChange}
-              key={i}
-              columns={columns}
-              row={row}
-              schema={schema}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
   );
 }
