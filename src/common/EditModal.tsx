@@ -22,7 +22,12 @@ export function EditModal({
   onDeleteItem: (v: any) => void;
   addNewRow: (v: any) => void;
 }) {
+  if (!focusedRow) {
+    return null;
+  }
+
   const isEditMode = !!focusedRow && !!focusedRow.id;
+
   const handleClickOpen = () => {
     setFocusedRow({});
   };
