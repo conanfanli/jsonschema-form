@@ -28,7 +28,6 @@ export function EditModal({
     return null;
   }
 
-  console.log("focus", focusedRow);
   const isEditMode = !!focusedRow && !!focusedRow.id;
 
   const handleClickOpen = () => {
