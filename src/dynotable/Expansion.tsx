@@ -2,7 +2,7 @@ import { Collapse, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import { SchemaEditForm } from "../common/SchemaForms";
-import { IFieldInfo, Schema } from "../types";
+import { Schema } from "../types";
 
 export function Expansion({
   schema,
