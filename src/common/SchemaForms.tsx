@@ -9,7 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { getFields, IFieldInfo, Schema } from "../types";
+import { IFieldInfo, Schema } from "../types";
+import { getFields } from "../fields/utils";
 import { ConfigContext } from "./contextProvider";
 import { ListField } from "./ListField";
 

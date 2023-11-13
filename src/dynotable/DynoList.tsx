@@ -3,30 +3,19 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
-import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Schema } from "../types";
 import { getFields } from "../fields/utils";
 import { Row } from "./Row";
-import { DynoList } from "./DynoList";
+import type { DynoTableProps } from "./Table";
 
-export interface DynoTableProps {
-  schema: Schema;
-  items: any[];
-  selectForEdit: (id: string) => void;
-  container?: string;
-}
-export function DynoTable(props: DynoTableProps) {
-  const { schema, items, selectForEdit, container = "list" } = props;
-  if (container === "list") {
-    return <DynoList {...props} />;
-  }
+import List from "@mui/material/List";
+
+export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
   const columns = getFields(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);
 
   return (
-    <TableContainer component={Paper}>
+    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
@@ -49,6 +38,6 @@ export function DynoTable(props: DynoTableProps) {
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </List>
   );
 }

@@ -1,4 +1,5 @@
 import * as React from "react";
+import ListItem from "@mui/material/ListItem";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { IFieldInfo, Schema } from "../types";
@@ -22,9 +23,13 @@ export function Row({
         sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
         onClick={() => selectForEdit(row.id)}
       >
-        {visibleColumns.map((c, index: number) => {
+        {visibleColumns.map((c) => {
           const formatted = formatField(row, c.name, schema.properties[c.name]);
-          return <TableCell key={c.name}>{formatted}</TableCell>;
+          return (
+            <TableCell key={c.name} align="right">
+              {formatted}
+            </TableCell>
+          );
         })}
       </TableRow>
     </React.Fragment>
