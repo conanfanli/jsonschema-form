@@ -1,5 +1,4 @@
 import * as React from "react";
-import ListItem from "@mui/material/ListItem";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { IFieldInfo, Schema } from "../types";

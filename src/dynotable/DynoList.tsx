@@ -15,29 +15,31 @@ export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
   const visibleColumns = columns.filter((f) => !f.is_hidden);
 
   return (
-    <List sx={{ bgcolor: "background.paper" }}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            {visibleColumns.map((column) => (
-              <TableCell key={column.name}>
-                {column?.title || column.name}
-              </TableCell>
+    <div>
+      <List sx={{ bgcolor: "background.paper" }}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              {visibleColumns.map((column) => (
+                <TableCell key={column.name}>
+                  {column?.title || column.name}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.map((row) => (
+              <Row
+                selectForEdit={selectForEdit}
+                key={row.id}
+                columns={columns}
+                row={row}
+                schema={schema}
+              />
             ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {items.map((row) => (
-            <Row
-              selectForEdit={selectForEdit}
-              key={row.id}
-              columns={columns}
-              row={row}
-              schema={schema}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </List>
+          </TableBody>
+        </Table>
+      </List>
+    </div>
   );
 }
