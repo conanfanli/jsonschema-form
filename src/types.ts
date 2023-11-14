@@ -36,3 +36,11 @@ export interface AppConfig {
   itemsUrl?: string;
   itemsFilters?: string; // This is a json string like {"label": "abc"}
 }
+
+export interface TaggedItem {
+  id: string;
+  date: string;
+  description: string;
+  tags?: string[];
+  [key: string]: any;
+}

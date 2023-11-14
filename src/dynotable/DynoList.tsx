@@ -15,7 +15,7 @@ export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
   const visibleColumns = columns.filter((f) => !f.is_hidden);
 
   return (
-    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+    <List sx={{ bgcolor: "background.paper" }}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>

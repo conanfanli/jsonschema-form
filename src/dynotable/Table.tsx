@@ -6,14 +6,14 @@ import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Schema } from "../types";
+import { Schema, TaggedItem } from "../types";
 import { getFields } from "../fields/utils";
 import { Row } from "./Row";
 import { DynoList } from "./DynoList";
 
 export interface DynoTableProps {
   schema: Schema;
-  items: any[];
+  items: TaggedItem[];
   selectForEdit: (id: string) => void;
   container?: string;
 }
