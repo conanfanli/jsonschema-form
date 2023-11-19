@@ -29,7 +29,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "graph": "depcruise --include-only \"^src\" --output-type dot src | dot -T svg > dependencygraph.svg",
+    "graph": "depcruise --include-only \"^src\" --output-type dot src | dot -T svg > dependencygraph.svg && open dependencygraph.svg",
     "lint": "eslint src",
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
