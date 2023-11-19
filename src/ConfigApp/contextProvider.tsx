@@ -5,7 +5,6 @@ import { AppConfig } from "../types";
 
 interface IConfigContext {
   config?: AppConfig;
-  errors?: string[];
   schemaClient?: SchemaClient;
 }
 export const ConfigContext = React.createContext<IConfigContext>({});

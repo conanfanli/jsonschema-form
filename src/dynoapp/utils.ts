@@ -1,6 +1,10 @@
 import { FieldType, IFieldInfo, Schema } from "../types";
 
-export function getFields(schema: Schema): Array<IFieldInfo> {
+/**
+ * Given a schema, return an array of IFieldInfo
+ *
+ */
+export function getFieldInfosFromSchema(schema: Schema): Array<IFieldInfo> {
   if (!schema.properties) {
     return [];
   }

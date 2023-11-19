@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { IFieldInfo, Schema } from "../types";
-import { getFields } from "../fields/utils";
-import { ConfigContext } from "./contextProvider";
-import { ListField } from "./ListField";
+import { getFieldInfosFromSchema } from "./utils";
+import { ConfigContext } from "../ConfigApp";
+import { DynoArrayField } from "./DynoArrayField";
 
 export function CreateForm({
   schema,
@@ -54,7 +54,7 @@ export function EditForm({
 }) {
   const isEditMode = !!row && !!row.id;
   const { config, schemaClient } = React.useContext(ConfigContext);
-  const editable = getFields(schema).filter((c) => !c.readOnly);
+  const editable = getFieldInfosFromSchema(schema).filter((c) => !c.readOnly);
 
   if (!config || !config.itemsUrl || !schemaClient) {
     return <div></div>;
@@ -176,7 +176,7 @@ function EditField({
       break;
     case "array":
       return (
-        <ListField
+        <DynoArrayField
           value={value}
           optionsUrl={fieldInfo.auto_complete}
           onChange={(newValue) => onChange(newValue)}

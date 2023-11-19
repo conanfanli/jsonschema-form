@@ -2,17 +2,17 @@ import { Schema } from "../types";
 
 export class SchemaClient {
   private schemaUrl: string;
-  public addError: (e: string) => void;
+  public onErrorCallback: (e: string) => void;
 
   constructor({
     schemaUrl,
-    addError = () => {},
+    onErrorCallback = () => {},
   }: {
     schemaUrl: string;
-    addError?: (e: string) => void;
+    onErrorCallback?: (e: string) => void;
   }) {
     this.schemaUrl = schemaUrl;
-    this.addError = addError;
+    this.onErrorCallback = onErrorCallback;
   }
 
   async getSchema(): Promise<[Schema | null, string]> {
@@ -36,7 +36,7 @@ export class SchemaClient {
     try {
       const data = await res.json();
       if (data.errorMessage) {
-        this.addError(`[GET ${url}]: ${data.errorMessage}`);
+        this.onErrorCallback(`[GET ${url}]: ${data.errorMessage}`);
         return [null, data.errorMessage];
       } else {
         return [data, ""];
@@ -44,7 +44,7 @@ export class SchemaClient {
     } catch (err) {
       const msg = `error parsing response as JSON when requesting ${itemsUrl}: ${err} `;
       console.error(msg);
-      this.addError(msg);
+      this.onErrorCallback(msg);
       return [null, msg];
     }
   }
@@ -57,7 +57,7 @@ export class SchemaClient {
     const data = await res.json();
 
     if (data.errorMessage) {
-      this.addError(`[PUT ${itemsUrl}]: ${data.errorMessage}`);
+      this.onErrorCallback(`[PUT ${itemsUrl}]: ${data.errorMessage}`);
       return [null, data.errorMessage];
     } else {
       return [data, ""];
@@ -72,7 +72,7 @@ export class SchemaClient {
     });
     const body = await res.json();
     if (body.errorMessage) {
-      this.addError(`[DELETE ${itemsUrl}]: ${body.errorMessage}`);
+      this.onErrorCallback(`[DELETE ${itemsUrl}]: ${body.errorMessage}`);
       return [null, body.errorMessage];
     } else {
       return [body, ""];

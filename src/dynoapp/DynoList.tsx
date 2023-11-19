@@ -1,17 +1,17 @@
 import * as React from "react";
+import { Schema, TaggedItem } from "../types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { getFields } from "../fields/utils";
-import { Row } from "./Row";
-import type { DynoTableProps } from "./Table";
+import { getFieldInfosFromSchema } from "./utils";
+import { DynoRow } from "./DynoRow";
 
 import List from "@mui/material/List";
 
 export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
-  const columns = getFields(schema);
+  const columns = getFieldInfosFromSchema(schema);
   const visibleColumns = columns.filter((f) => !f.is_hidden);
 
   return (
@@ -29,7 +29,7 @@ export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
           </TableHead>
           <TableBody>
             {items.map((row) => (
-              <Row
+              <DynoRow
                 selectForEdit={selectForEdit}
                 key={row.id}
                 columns={columns}
@@ -42,4 +42,11 @@ export function DynoList({ schema, items, selectForEdit }: DynoTableProps) {
       </List>
     </div>
   );
+}
+
+export interface DynoTableProps {
+  schema: Schema;
+  items: TaggedItem[];
+  selectForEdit: (id: string) => void;
+  container?: string;
 }

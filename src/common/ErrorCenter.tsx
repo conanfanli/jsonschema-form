@@ -1,21 +1,20 @@
 import * as React from "react";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import Snackbar from "@mui/material/Snackbar";
-import { ConfigContext } from "./contextProvider";
 import { Badge, Alert, Box, Collapse, Grid } from "@mui/material";
 
-export function ErrorCenter() {
-  const { schemaClient } = React.useContext(ConfigContext);
-  const [errors, setErrors] = React.useState<string[]>([]);
+export function ErrorCenter(props: { errors: string[] }) {
+  const { errors } = props;
+  // const [errors, setErrors] = React.useState<string[]>([]);
   const [nextMessageIndex, setNextMessageIndex] = React.useState(0);
   const [open, setOpen] = React.useState(false);
+
   const toDisplay = errors[nextMessageIndex];
+  /*
   const addError = (e: string) => {
     setErrors([...errors, e]);
   };
-  if (schemaClient) {
-    schemaClient.addError = addError;
-  }
+  */
 
   return (
     <Box>

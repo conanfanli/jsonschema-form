@@ -6,8 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Grid, Typography } from "@mui/material";
-import { ErrorCenter } from "./ErrorCenter";
-import { CreateForm, EditForm } from "./SchemaForms";
+import { CreateForm, EditForm } from "./DynoForm";
 import { Schema } from "../types";
 
 export function EditModal({
@@ -45,9 +44,7 @@ export function EditModal({
             Add a new row
           </Button>
         </Grid>
-        <Grid item xs={8}>
-          <ErrorCenter />
-        </Grid>
+        <Grid item xs={8}></Grid>
       </Grid>
       {focusedRow ? (
         <Dialog

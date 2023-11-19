@@ -1,9 +1,9 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import { ConfigContext } from "./contextProvider";
-import { MultiSelect } from "../fields/MultiSelect";
+import { ConfigContext } from "../ConfigApp";
+import { MultiSelect } from "../common";
 
-export function ListField({
+export function DynoArrayField({
   optionsUrl,
   value,
   onChange,

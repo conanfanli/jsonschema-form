@@ -1,9 +1,8 @@
 import React from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./App.css";
-import { DynoPage } from "./dynotable/DynoPage";
-import { ConfigForm } from "./common/ConfigForm";
-import { ConfigProvider } from "./common/contextProvider";
+import { DynoApp } from "./DynoApp/DynoApp";
+import { ConfigProvider, ConfigForm } from "./ConfigApp";
 
 function Root() {
   return (
@@ -23,7 +22,7 @@ const router = createBrowserRouter(
       element: <Root />,
       children: [
         { path: "/", element: <ConfigForm /> },
-        { path: "/:configName", element: <DynoPage /> },
+        { path: "/:configName", element: <DynoApp /> },
       ],
     },
   ],

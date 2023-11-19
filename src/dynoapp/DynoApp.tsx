@@ -1,12 +1,13 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { ConfigContext } from "../common/contextProvider";
-import { EditModal } from "../common/EditModal";
-import { MultiSelect } from "../fields/MultiSelect";
+import { ConfigContext } from "../ConfigApp";
+import { ErrorCenter } from "../common";
+import { EditModal } from "./EditModal";
+import { MultiSelect } from "../common";
 import { Schema } from "../types";
-import { DynoTable } from "./Table";
+import { DynoList } from "./DynoList";
 
-export function DynoPage() {
+export function DynoApp() {
   const { configName } = useParams();
 
   const { schemaClient } = React.useContext(ConfigContext);
@@ -18,12 +19,17 @@ export function DynoPage() {
   const config = configs.find((c) => c.name === configName);
   const [options, setOptions] = React.useState<string[]>([]);
   const [selected, setSelected] = React.useState<string[]>([]);
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     const fetchData = async () => {
       if (!schemaClient) {
         return;
       }
+      const onErrorCallback = (e: string) => {
+        setErrors([...errors, e]);
+      };
+      schemaClient.onErrorCallback = onErrorCallback;
       const [schema] = await schemaClient.getSchema();
 
       if (schema) {
@@ -59,6 +65,7 @@ export function DynoPage() {
     config.itemsUrl,
     config.name,
     schemaClient,
+    errors,
   ]);
 
   function replaceItem(newRow) {
@@ -80,6 +87,7 @@ export function DynoPage() {
 
   return schema ? (
     <div>
+      <ErrorCenter errors={errors} />
       <EditModal
         focusedRow={focusedRow}
         onDeleteItem={deleteRow}
@@ -97,7 +105,7 @@ export function DynoPage() {
           selected={selected}
         />
       ) : null}
-      <DynoTable
+      <DynoList
         items={items}
         selectForEdit={(id: string) =>
           setFocusedRow(items.filter((item) => item.id === id)[0])

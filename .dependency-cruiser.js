@@ -205,7 +205,7 @@ module.exports = {
           leave out if you want to exclude neither (recommended!)
     */
     exclude : {
-      path: '\.(spec|test)\.(tsx|js|mjs|cjs|ts|ls|coffee|litcoffee|coffee\.md)$',
+      path: '\.(spec|test)\.(tsx|js|mjs|cjs|ts|ls|coffee|litcoffee|coffee\.md)$|\.css|types.ts',
       dynamic: true
     },
 
