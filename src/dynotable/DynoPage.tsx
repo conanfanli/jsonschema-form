@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { ConfigContext } from "../common/contextProvider";
 import { EditModal } from "../common/EditModal";
+import { MultiSelect } from "../fields/MultiSelect";
 import { Schema } from "../types";
 import { DynoTable } from "./Table";
 
@@ -15,6 +16,8 @@ export function DynoPage() {
 
   const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
   const config = configs.find((c) => c.name === configName);
+  const [options, setOptions] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +38,17 @@ export function DynoPage() {
         setItems(items);
       } else {
         setItems([]);
+      }
+      //
+      // TODO: do not hard code fetch tags logic here
+      //const itemsUrl = new URL(config.schemaUrl)
+      const tagsUrl = `${config.itemsUrl.replace(
+        /(\w+)\/items/,
+        "barnie_distinct_tags/items",
+      )}`;
+      const [options] = await schemaClient.getItems(tagsUrl, {});
+      if (options && options.length) {
+        setOptions(options.map((o) => o.name));
       }
     };
 
@@ -74,6 +88,15 @@ export function DynoPage() {
         addNewRow={addNewRow}
         replaceItem={replaceItem}
       />
+      {options ? (
+        <MultiSelect
+          allowNewOption={false}
+          label="tags"
+          options={options}
+          onSelectionsChange={setSelected}
+          selected={selected}
+        />
+      ) : null}
       <DynoTable
         items={items}
         selectForEdit={(id: string) =>
