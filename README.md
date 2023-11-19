@@ -13,4 +13,4 @@ App.tsx:
         - onSelect -> modal
 
 
-![Depdency graph](./docs/dependencygraph.svg)
+![Depdency graph](./dependencygraph.svg)
