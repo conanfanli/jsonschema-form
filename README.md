@@ -11,3 +11,6 @@ App.tsx:
       - <Row>
         - formatField()
         - onSelect -> modal
+
+
+![Depdency graph](./docs/dependencygraph.svg)
