@@ -33,18 +33,21 @@ export function ConfigForm() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const initial = Object.fromEntries<string>(searchParams) as any;
 
   const defaultSchemaUrl = searchParams.get("schemaUrl") || "";
 
-  const [config, setConfig] = React.useState<AppConfig>({
-    name: "",
-    schemaUrl: defaultSchemaUrl,
-    itemsUrl:
-      (defaultSchemaUrl && defaultSchemaUrl + "/items") ||
-      searchParams.get("itemsUrl") ||
-      "",
-    itemsFilters: searchParams.get("itemsFilters") || "",
-  });
+  const [config, setConfig] = React.useState<AppConfig>(
+    initial || {
+      name: "",
+      schemaUrl: defaultSchemaUrl,
+      itemsUrl:
+        (defaultSchemaUrl && defaultSchemaUrl + "/items") ||
+        searchParams.get("itemsUrl") ||
+        "",
+      itemsFilters: searchParams.get("itemsFilters") || "",
+    },
+  );
 
   const [options, setOptions] = React.useState<AppConfig[]>([]);
 
@@ -66,71 +69,74 @@ export function ConfigForm() {
       >
         Config
       </Button>
-      <Collapse
-        style={{ marginTop: "1ch" }}
-        in={open}
-        timeout="auto"
-        unmountOnExit
-      >
-        <ConfigSelect
-          options={options}
-          onSelect={(selected: AppConfig) => {
-            setConfig({ ...config, ...selected });
-          }}
-        />
-        <TextField
-          onChange={(e) => {
-            setConfig({ ...config, schemaUrl: e.target.value });
-          }}
-          value={config.schemaUrl}
-          fullWidth
-          helperText="Schema URL"
-        />
-        <TextField
-          onChange={(e) => setConfig({ ...config, itemsUrl: e.target.value })}
-          value={config.itemsUrl}
-          fullWidth
-          helperText="Items URL"
-        />
-        <TextField
-          onChange={(e) => {
-            setConfig({ ...config, itemsFilters: e.target.value });
-          }}
-          value={config.itemsFilters}
-          fullWidth
-          helperText="Items filter"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            const newOptions = saveConfig(options, config);
-            setOptions(newOptions);
-            setSearchParams({ ...config });
-          }}
+      {open ? (
+        <Collapse
+          style={{ marginTop: "1ch" }}
+          in={open}
+          timeout="auto"
+          unmountOnExit
         >
-          Save
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => {
-            const newOptions = removeConfig(options, config);
-            setOptions(newOptions);
-          }}
-        >
-          delete
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => {
-            navigate(`/${config.name}`);
-          }}
-        >
-          Go
-        </Button>
-      </Collapse>
+          <ConfigSelect
+            initial={{ ...config }}
+            options={options}
+            onSelect={(selected: AppConfig) => {
+              setConfig({ ...config, ...selected });
+            }}
+          />
+          <TextField
+            onChange={(e) => {
+              setConfig({ ...config, schemaUrl: e.target.value });
+            }}
+            value={config.schemaUrl}
+            fullWidth
+            helperText="Schema URL"
+          />
+          <TextField
+            onChange={(e) => setConfig({ ...config, itemsUrl: e.target.value })}
+            value={config.itemsUrl}
+            fullWidth
+            helperText="Items URL"
+          />
+          <TextField
+            onChange={(e) => {
+              setConfig({ ...config, itemsFilters: e.target.value });
+            }}
+            value={config.itemsFilters}
+            fullWidth
+            helperText="Items filter"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              const newOptions = saveConfig(options, config);
+              setOptions(newOptions);
+              setSearchParams({ ...config });
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              const newOptions = removeConfig(options, config);
+              setOptions(newOptions);
+            }}
+          >
+            delete
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              navigate(`/views/${config.name}`);
+            }}
+          >
+            Go
+          </Button>
+        </Collapse>
+      ) : null}
     </Box>
   );
 }
@@ -138,11 +144,13 @@ export function ConfigForm() {
 function ConfigSelect({
   options,
   onSelect,
+  initial = null,
 }: {
   options: AppConfigOption[];
+  initial?: AppConfigOption | null;
   onSelect: (AppConfig) => void;
 }) {
-  const [value, setValue] = React.useState<AppConfigOption | null>(null);
+  const [value, setValue] = React.useState<AppConfigOption | null>(initial);
   return (
     <Autocomplete
       value={value}

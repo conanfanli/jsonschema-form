@@ -6,6 +6,7 @@ export type FieldType =
   | "composite"
   | "null"
   | "enum";
+
 export interface Property {
   $ref?: Schema;
   allOf?: any[];
@@ -20,16 +21,23 @@ export interface Property {
   required: string[];
   title?: string;
   type: FieldType;
+
+  // Server
+  query_params_on_filter?: string;
+  getAutoCompleteOptions?: () => Promise<string[]>;
 }
+
+export interface IFieldInfo extends Property {
+  name: string;
+}
+
 export interface Schema {
   type: FieldType;
   title: string;
   properties: { [key: string]: Property };
   $defs: any;
 }
-export interface IFieldInfo extends Property {
-  name: string;
-}
+
 export interface AppConfig {
   name: string;
   schemaUrl?: string;
@@ -43,4 +51,16 @@ export interface TaggedItem {
   description: string;
   tags?: string[];
   [key: string]: any;
+}
+
+export interface IResourceClient<T = any> {
+  schemaUrl: string;
+  request: (...args) => Promise<[T | null, string]>;
+  getItems: (arg: {
+    queryFilters?: string;
+    url?: string;
+  }) => Promise<[T[] | null, string]>;
+  putItem: (data: T) => Promise<[T | null, string]>;
+  deleteItem: (data: T) => Promise<[T | null, string]>;
+  getSchema: () => Promise<[Schema | null, string]>;
 }

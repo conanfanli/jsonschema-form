@@ -11,90 +11,78 @@ import {
 import { Box } from "@mui/system";
 import { IFieldInfo, Schema } from "../types";
 import { getFieldInfosFromSchema } from "./utils";
-import { ConfigContext } from "../ConfigApp";
-import { DynoArrayField } from "./DynoArrayField";
+import { MultiSelect } from "../common/MultiSelect";
 
-export function CreateForm({
-  schema,
-  addNewRow,
-}: {
-  schema: Schema;
-  addNewRow: (r: any) => void;
-}) {
-  const [newRow, setNewRow] = React.useState({});
-  return (
-    <EditForm
-      row={newRow}
-      onChange={(newRow) => {
-        setNewRow(newRow);
-      }}
-      onSubmitItem={(r) => {
-        addNewRow(r);
-        setNewRow({});
-      }}
-      onDeleteItem={() => {}}
-      schema={schema}
-    />
-  );
-}
-export function EditForm({
-  schema,
-  row,
-  noButtons = false,
-  onChange,
-  onSubmitItem = () => {},
-  onDeleteItem,
-}: {
+interface EditFormProps {
   schema: Schema;
   row: any;
   noButtons?: boolean;
   onChange: (v: any) => void;
   onSubmitItem?: (v: any) => void;
   onDeleteItem: (v: any) => void;
-}) {
+  options: string[];
+}
+interface EditFieldProps {
+  schema: Schema;
+  fieldInfo: IFieldInfo;
+  value: any;
+  options: string[];
+  isEditMode: boolean;
+  onChange: (any) => void;
+  onDeleteItem: (v: any) => void;
+}
+
+export function DynoForm({
+  noButtons = false,
+  onChange,
+  onDeleteItem,
+  onSubmitItem = () => { },
+  row,
+  options,
+  schema,
+}: EditFormProps) {
   const isEditMode = !!row && !!row.id;
-  const { config, schemaClient } = React.useContext(ConfigContext);
   const editable = getFieldInfosFromSchema(schema).filter((c) => !c.readOnly);
 
-  if (!config || !config.itemsUrl || !schemaClient) {
-    return <div></div>;
-  }
-
-  const onSubmit = async () => {
-    const [item] = await schemaClient.putItem(config.itemsUrl || "", row);
-    if (item) {
-      onSubmitItem(item);
-    }
-  };
-  const onDelete = async () => {
-    const [res] = await schemaClient.deleteItem(config.itemsUrl || "", row);
-    if (res) {
-      onDeleteItem(row);
-    }
-  };
   return (
     <Box>
       {!isEditMode ? (
         <Typography variant="h4">{schema.title}</Typography>
       ) : null}
-      {editable.map((col) => (
-        <EditField
-          schema={schema}
-          isEditMode={isEditMode}
-          key={col.name}
-          fieldInfo={col}
-          value={row ? row[col.name] : ""}
-          onChange={(newValue) => {
-            onChange({ ...row, [col.name]: newValue });
-          }}
-        />
-      ))}
+      {editable.map((col) => {
+        return (
+          <EditField
+            key={col.name}
+            schema={schema}
+            onDeleteItem={onDeleteItem}
+            isEditMode={isEditMode}
+            fieldInfo={col}
+            options={options}
+            value={row ? row[col.name] : ""}
+            onChange={(newValue) => {
+              onChange({ ...row, [col.name]: newValue });
+            }}
+          />
+        );
+      })}
       {!noButtons ? (
         <>
-          <Button onClick={onSubmit} variant="contained" color="primary">
+          <Button
+            onClick={async () => {
+              await onSubmitItem(row);
+            }}
+            variant="contained"
+            color="primary"
+          >
             Submit
           </Button>
-          <Button onClick={onDelete} variant="contained" color="secondary">
+          <Button
+            onClick={async () => {
+              await onDeleteItem(row);
+            }}
+            variant="contained"
+            color="secondary"
+          >
             Delete
           </Button>{" "}
         </>
@@ -108,18 +96,13 @@ function EditField({
   fieldInfo,
   value,
   isEditMode,
+  options,
   onChange,
-  onDeleteItem = () => {},
-}: {
-  schema: Schema;
-  fieldInfo: IFieldInfo;
-  value: any;
-  isEditMode: boolean;
-  onChange: (any) => void;
-  onDeleteItem?: (v: any) => void;
-}) {
+  onDeleteItem = () => { },
+}: EditFieldProps) {
   let inputType = "text";
   const [open, setOpen] = React.useState(false);
+
   switch (fieldInfo.type) {
     case "composite":
       if (fieldInfo.$ref) {
@@ -140,7 +123,8 @@ function EditField({
               unmountOnExit
             >
               <Box sx={{ ml: 4 }}>
-                <EditForm
+                <DynoForm
+                  options={options}
                   onDeleteItem={onDeleteItem}
                   onChange={onChange}
                   schema={schema}
@@ -175,12 +159,16 @@ function EditField({
       }
       break;
     case "array":
-      return (
-        <DynoArrayField
-          value={value}
-          optionsUrl={fieldInfo.auto_complete}
-          onChange={(newValue) => onChange(newValue)}
+      return fieldInfo.getAutoCompleteOptions ? (
+        <MultiSelect
+          label={fieldInfo.title || fieldInfo.name}
+          allowNewOption={true}
+          getOptions={fieldInfo.getAutoCompleteOptions}
+          selected={value}
+          onSelectionsChange={(newValue) => onChange(newValue)}
         />
+      ) : (
+        <div>not defined array</div>
       );
     default:
       console.error("cannot decided input field for", fieldInfo);

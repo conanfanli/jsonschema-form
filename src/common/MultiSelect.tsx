@@ -11,20 +11,40 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 interface MultiSelectProps {
-  options: string[];
-  // Called whenever select/deselect something
+  initialOptions?: string[];
   onSelectionsChange: (newSelections: string[]) => void;
   allowNewOption: boolean;
   selected: string[];
   label: string;
+  getOptions?: () => Promise<string[] | null>;
 }
+
 export function MultiSelect(props: MultiSelectProps) {
-  const { options, selected, onSelectionsChange, allowNewOption, label } =
-    props;
-  options.sort();
+  const {
+    getOptions,
+    initialOptions = [],
+    selected,
+    onSelectionsChange,
+    allowNewOption,
+    label,
+  } = props;
+  const [options, setOptions] = React.useState<string[]>(initialOptions);
+
+  async function onOpen() {
+    if (!getOptions) return;
+    const opts = await getOptions();
+    if (opts) {
+      setOptions(opts);
+    }
+  }
+
+  const opts = [...options];
+  opts.sort();
+
   return (
     <Autocomplete
       fullWidth
+      onOpen={onOpen}
       multiple
       onChange={(_, newValue: string[]) => {
         onSelectionsChange(
@@ -34,7 +54,7 @@ export function MultiSelect(props: MultiSelectProps) {
         );
       }}
       value={selected || []}
-      options={options}
+      options={opts}
       freeSolo={allowNewOption ? true : undefined}
       renderOption={(props, option, { selected }) => (
         <li {...props}>

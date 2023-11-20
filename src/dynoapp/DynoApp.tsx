@@ -1,110 +1,44 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { ConfigContext } from "../ConfigApp";
-import { ErrorCenter } from "../common";
-import { EditModal } from "./EditModal";
-import { MultiSelect } from "../common";
-import { Schema } from "../types";
+import { ConfigForm } from "../ConfigApp";
+import { ModalContainer } from "../common/ModalContainer";
 import { DynoList } from "./DynoList";
+import { DynoForm } from "./DynoForm";
+import { useShit } from "./hooks";
+import { FilterForm } from "./FilterForm";
+import { getFieldInfosFromSchema } from "./utils";
 
 export function DynoApp() {
-  const { configName } = useParams();
+  console.log("render DynoApp");
 
-  const { schemaClient } = React.useContext(ConfigContext);
-  const [schema, setSchema] = React.useState<Schema | null>(null);
-  const [focusedRow, setFocusedRow] = React.useState<any>(null);
-  const [items, setItems] = React.useState<any[]>([]);
+  const {
+    schema,
+    focusedRow,
+    setFocusedRow,
+    onDeleteItem,
+    options,
+    items,
+    onSubmitItem,
+  } = useShit();
 
-  const configs = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
-  const config = configs.find((c) => c.name === configName);
-  const [options, setOptions] = React.useState<string[]>([]);
-  const [selected, setSelected] = React.useState<string[]>([]);
-  const [errors, setErrors] = React.useState<string[]>([]);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (!schemaClient) {
-        return;
-      }
-      const onErrorCallback = (e: string) => {
-        setErrors([...errors, e]);
-      };
-      schemaClient.onErrorCallback = onErrorCallback;
-      const [schema] = await schemaClient.getSchema();
-
-      if (schema) {
-        setSchema(schema);
-      }
-
-      const [items] = await schemaClient.getItems(config.itemsUrl, {
-        filters: config.itemsFilters,
-      });
-
-      if (items && items.length) {
-        setItems(items);
-      } else {
-        setItems([]);
-      }
-      //
-      // TODO: do not hard code fetch tags logic here
-      //const itemsUrl = new URL(config.schemaUrl)
-      const tagsUrl = `${config.itemsUrl.replace(
-        /(\w+)\/items/,
-        "barnie_distinct_tags/items",
-      )}`;
-      const [options] = await schemaClient.getItems(tagsUrl, {});
-      if (options && options.length) {
-        setOptions(options.map((o) => o.name));
-      }
-    };
-
-    fetchData();
-  }, [
-    config.schemaUrl,
-    config.itemsFilters,
-    config.itemsUrl,
-    config.name,
-    schemaClient,
-    errors,
-  ]);
-
-  function replaceItem(newRow) {
-    const newItems = items.map((item) => {
-      if (item.id === newRow.id) {
-        console.log(newRow);
-        return newRow;
-      }
-      return item;
-    });
-    setItems(newItems);
-  }
-  function addNewRow(newRow) {
-    setItems([newRow, ...items]);
-  }
-  function deleteRow(row) {
-    setItems(items.filter((item) => item.id !== row.id));
-  }
-
-  return schema ? (
+  return schema && onDeleteItem && onSubmitItem ? (
     <div>
-      <ErrorCenter errors={errors} />
-      <EditModal
-        focusedRow={focusedRow}
-        onDeleteItem={deleteRow}
-        schema={schema}
-        setFocusedRow={setFocusedRow}
-        addNewRow={addNewRow}
-        replaceItem={replaceItem}
-      />
-      {options ? (
-        <MultiSelect
-          allowNewOption={false}
-          label="tags"
+      <ModalContainer
+        open={!!focusedRow}
+        isNewItem={focusedRow && !focusedRow.id}
+        onOpenNewModal={() => setFocusedRow({})}
+        onCloseModal={() => setFocusedRow(null)}
+      >
+        <DynoForm
           options={options}
-          onSelectionsChange={setSelected}
-          selected={selected}
+          onChange={setFocusedRow}
+          schema={schema}
+          row={focusedRow}
+          onSubmitItem={onSubmitItem}
+          onDeleteItem={onDeleteItem}
         />
-      ) : null}
+      </ModalContainer>
+      <ConfigForm />
+      <FilterForm fields={getFieldInfosFromSchema(schema)} />
       <DynoList
         items={items}
         selectForEdit={(id: string) =>

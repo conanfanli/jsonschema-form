@@ -1,81 +1,95 @@
-import { Schema } from "../types";
+import { Schema, IResourceClient } from "../types";
 
-export class SchemaClient {
-  private schemaUrl: string;
-  public onErrorCallback: (e: string) => void;
+interface ICacheProvider {
+  get: (key: string) => any;
+  set: (key: string, value: any) => void;
+}
+interface IRequestArgs {
+  url: string;
+  method: "PUT" | "DELETE" | "GET";
+  data: any;
+  errorHandler?: (e: string) => void;
+  cacheProvider?: ICacheProvider;
+}
 
-  constructor({
-    schemaUrl,
-    onErrorCallback = () => {},
+async function request<T>({
+  url,
+  method,
+  data,
+  cacheProvider,
+  errorHandler = () => {},
+}: IRequestArgs): Promise<[T | null, string]> {
+  if (method === "GET" && cacheProvider && cacheProvider.get(url)) {
+    console.log("cache hit", url);
+    return cacheProvider.get(url);
+  }
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: method !== "GET" ? JSON.stringify(data) : undefined,
+  });
+  const resData = await res.json();
+
+  if (resData.errorMessage) {
+    errorHandler(`[${method} ${url}]: ${resData.errorMessage}`);
+    return [null, resData.errorMessage];
+  } else {
+    if (method === "GET" && cacheProvider) {
+      cacheProvider.set(url, [resData, ""]);
+      console.log("write cache", url, resData);
+    }
+
+    return [resData, ""];
+  }
+}
+
+export function ResourceClient<T = any>(
+  schemaUrl: string,
+  errorHandler: (err: string) => void,
+  cacheProvider: ICacheProvider,
+): IResourceClient<T> {
+  const getSchema = request.bind<
+    null,
+    IRequestArgs,
+    Promise<[Schema | null, string]>
+  >(null, {
+    url: schemaUrl,
+    method: "GET",
+    data: {},
+    cacheProvider,
+  });
+
+  function getItems({
+    url = "",
+    queryFilters = "",
   }: {
-    schemaUrl: string;
-    onErrorCallback?: (e: string) => void;
+    url?: string;
+    queryFilters?: string;
   }) {
-    this.schemaUrl = schemaUrl;
-    this.onErrorCallback = onErrorCallback;
-  }
-
-  async getSchema(): Promise<[Schema | null, string]> {
-    const res = await fetch(this.schemaUrl);
-    const data = await res.json();
-
-    if (data.errorMessage) {
-      return [null, data.errorMessage];
-    }
-    return [data, ""];
-  }
-  async getItems(
-    itemsUrl: string,
-    queryFilters: {},
-  ): Promise<[any[] | null, string]> {
-    const url = `${itemsUrl}?` + new URLSearchParams(queryFilters);
-    const res = await fetch(url, {
+    const actualUrl = url ? url : `${schemaUrl}/items?filters=` + queryFilters;
+    return request<T[]>({
+      url: actualUrl,
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      data: {},
+      errorHandler,
+      cacheProvider,
     });
-    try {
-      const data = await res.json();
-      if (data.errorMessage) {
-        this.onErrorCallback(`[GET ${url}]: ${data.errorMessage}`);
-        return [null, data.errorMessage];
-      } else {
-        return [data, ""];
-      }
-    } catch (err) {
-      const msg = `error parsing response as JSON when requesting ${itemsUrl}: ${err} `;
-      console.error(msg);
-      this.onErrorCallback(msg);
-      return [null, msg];
-    }
   }
-  async putItem<T>(itemsUrl: string, item: T): Promise<[T | null, string]> {
-    const res = await fetch(itemsUrl || "", {
+  const putItem = (data: T) => {
+    return request<T>({
+      url: `${schemaUrl}/items`,
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(item),
+      data,
+      errorHandler,
     });
-    const data = await res.json();
-
-    if (data.errorMessage) {
-      this.onErrorCallback(`[PUT ${itemsUrl}]: ${data.errorMessage}`);
-      return [null, data.errorMessage];
-    } else {
-      return [data, ""];
-    }
-  }
-
-  async deleteItem<T>(itemsUrl: string, data: T): Promise<[T | null, string]> {
-    const res = await fetch(itemsUrl || "", {
+  };
+  function deleteItem(data: T) {
+    return request<T>({
+      url: `${schemaUrl}/items`,
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      data,
+      errorHandler,
     });
-    const body = await res.json();
-    if (body.errorMessage) {
-      this.onErrorCallback(`[DELETE ${itemsUrl}]: ${body.errorMessage}`);
-      return [null, body.errorMessage];
-    } else {
-      return [body, ""];
-    }
   }
+  return { schemaUrl, request, getItems, putItem, deleteItem, getSchema };
 }

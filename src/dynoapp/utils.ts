@@ -1,4 +1,20 @@
-import { FieldType, IFieldInfo, Schema } from "../types";
+import { FieldType, IFieldInfo, Property, Schema } from "../types";
+function getAutoCompleteOptions(prop: Property) {
+  if (!prop.auto_complete) {
+    throw new Error(`missing auto_complete for ${prop.type}`);
+  }
+  return async () => {
+    const res = await fetch(prop?.auto_complete || "", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    const resData = await res.json();
+    if (resData) {
+      return resData.map((res) => res.name);
+    }
+    return [];
+  };
+}
 
 /**
  * Given a schema, return an array of IFieldInfo
@@ -16,6 +32,11 @@ export function getFieldInfosFromSchema(schema: Schema): Array<IFieldInfo> {
     if (name === "id") {
       field.is_hidden = true;
     }
+
+    if (field.auto_complete) {
+      field.getAutoCompleteOptions = getAutoCompleteOptions(field);
+    }
+
     if (!field.type) {
       // e.g. hash_key: {allOf: [{$ref: "#/$defs/Field"}]}
       if (field.allOf) {
