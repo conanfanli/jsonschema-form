@@ -1,5 +1,5 @@
 import React from "react";
-import { ConfigForm } from "../ConfigApp";
+import { SearchParamForm } from "../SavedViewsApp/SearchParamForm";
 import { ModalContainer } from "../common/ModalContainer";
 import { DynoList } from "./DynoList";
 import { DynoForm } from "./DynoForm";
@@ -37,7 +37,7 @@ export function DynoApp() {
           onDeleteItem={onDeleteItem}
         />
       </ModalContainer>
-      <ConfigForm />
+      <SearchParamForm />
       <FilterForm fields={getFieldInfosFromSchema(schema)} />
       <DynoList
         items={items}

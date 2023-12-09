@@ -53,12 +53,12 @@ export function useShit() {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      if (!resourceClient || !config?.itemsUrl) {
+      if (!resourceClient) {
         return;
       }
 
       const [items] = await resourceClient.getItems({
-        queryFilters: config.itemsFilters || "",
+        queryFilters: config?.itemsFilters || "",
       });
       const [res] = await resourceClient.getSchema();
       if (res) {
@@ -73,13 +73,7 @@ export function useShit() {
     };
 
     fetchData();
-  }, [
-    config?.schemaUrl,
-    config?.itemsFilters,
-    config?.itemsUrl,
-    config?.name,
-    resourceClient,
-  ]);
+  }, [config?.schemaUrl, config?.itemsFilters, config?.name, resourceClient]);
 
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));

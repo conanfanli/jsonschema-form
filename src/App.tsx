@@ -3,36 +3,13 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  useNavigate,
   useParams,
 } from "react-router-dom";
 import "./App.css";
 import { DynoApp } from "./DynoApp/DynoApp";
-import { ConfigProvider, ConfigForm } from "./ConfigApp";
-
-/**
- *
- * If url is /views/abc, redirect to /dyno/abc?query=xxxx. Query string
- * is the sort of truth.
- */
-
-function SavedViewRedirect() {
-  const { viewName } = useParams();
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("savedConfigs") || "[]");
-    const view = saved.find((c) => c.name === viewName);
-    if (!view) {
-      return;
-    }
-    const params = `/dyno/${viewName}?` + new URLSearchParams(view);
-    function redirect() {
-      navigate(params);
-    }
-    setTimeout(redirect, 1000);
-  }, [viewName, navigate]);
-  return <div>loading ...</div>;
-}
+import { SavedViewRedirect } from "./SavedViewsApp/ViewRedirect";
+import { SearchParamForm } from "./SavedViewsApp/SearchParamForm";
+import { ConfigProvider } from "./ConfigApp";
 
 function Root() {
   const { viewName } = useParams();
@@ -88,9 +65,14 @@ const router = createBrowserRouter(
       path: "/",
       element: <Root />,
       children: [
-        { path: "/config", element: <ConfigForm /> },
-        { path: "/dyno/:viewName", element: <DynoApp /> },
-        { path: "/views/:viewName", element: <SavedViewRedirect /> },
+        { path: "/views", element: <SearchParamForm /> },
+        { path: "/dyno", element: <DynoApp /> },
+        {
+          path: "/views/:viewName",
+          element: (
+            <SavedViewRedirect redirectTo="/dyno" addViewNameToPath={false} />
+          ),
+        },
       ],
     },
   ],
