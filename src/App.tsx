@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createBrowserRouter,
   Outlet,
@@ -16,7 +10,6 @@ import "./App.css";
 import { DynoApp } from "./dynoapp";
 import { SavedViewRedirect } from "./savedviewapp/ViewRedirect";
 import { SearchParamForm } from "./savedviewapp/SearchParamForm";
-import { ConfigProvider } from "./ConfigApp";
 
 const queryClient = new QueryClient();
 
@@ -61,11 +54,9 @@ function Root() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <ConfigProvider>
-          <div style={{ margin: ".1ch" }}>
-            <Outlet />
-          </div>
-        </ConfigProvider>
+        <div style={{ margin: ".1ch" }}>
+          <Outlet />
+        </div>
       </QueryClientProvider>
     </>
   );
@@ -77,11 +68,11 @@ const router = createBrowserRouter(
       element: <Root />,
       children: [
         { path: "/views", element: <SearchParamForm /> },
-        { path: "/dyno", element: <DynoApp /> },
+        { path: "/dyno/:viewName", element: <DynoApp /> },
         {
           path: "/views/:viewName",
           element: (
-            <SavedViewRedirect redirectTo="/dyno" addViewNameToPath={false} />
+            <SavedViewRedirect redirectTo="/dyno" addViewNameToPath={true} />
           ),
         },
       ],

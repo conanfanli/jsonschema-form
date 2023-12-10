@@ -28,7 +28,7 @@ export function SearchParamForm(props: SearchParamFormProps) {
 
   return (
     <div>
-      {decodeURIComponent(queryString)}
+      <p>{decodeURIComponent(queryString)}</p>
       <ViewNameSelect
         initialViewName={queryObject.viewName}
         onSelect={(viewName) => {
