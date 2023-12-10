@@ -6,9 +6,9 @@ import {
   useParams,
 } from "react-router-dom";
 import "./App.css";
-import { DynoApp } from "./DynoApp";
-import { SavedViewRedirect } from "./SavedViewsApp/ViewRedirect";
-import { SearchParamForm } from "./SavedViewsApp/SearchParamForm";
+import { DynoApp } from "./dynoapp";
+import { SavedViewRedirect } from "./savedviewapp/ViewRedirect";
+import { SearchParamForm } from "./savedviewapp/SearchParamForm";
 import { ConfigProvider } from "./ConfigApp";
 
 function Root() {
