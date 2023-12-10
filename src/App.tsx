@@ -66,11 +66,11 @@ const router = createBrowserRouter(
       element: <Root />,
       children: [
         { path: "/views", element: <SearchParamForm /> },
-        { path: "/dyno", element: <DynoApp /> },
+        { path: "/dyno/:viewName", element: <DynoApp /> },
         {
           path: "/views/:viewName",
           element: (
-            <SavedViewRedirect redirectTo="/dyno" addViewNameToPath={false} />
+            <SavedViewRedirect redirectTo="/dyno" addViewNameToPath={true} />
           ),
         },
       ],
