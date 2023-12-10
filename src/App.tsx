@@ -1,5 +1,12 @@
 import React from "react";
 import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
@@ -10,6 +17,8 @@ import { DynoApp } from "./dynoapp";
 import { SavedViewRedirect } from "./savedviewapp/ViewRedirect";
 import { SearchParamForm } from "./savedviewapp/SearchParamForm";
 import { ConfigProvider } from "./ConfigApp";
+
+const queryClient = new QueryClient();
 
 function Root() {
   const { viewName } = useParams();
@@ -51,11 +60,13 @@ function Root() {
   });
   return (
     <>
-      <ConfigProvider>
-        <div style={{ margin: ".1ch" }}>
-          <Outlet />
-        </div>
-      </ConfigProvider>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider>
+          <div style={{ margin: ".1ch" }}>
+            <Outlet />
+          </div>
+        </ConfigProvider>
+      </QueryClientProvider>
     </>
   );
 }
