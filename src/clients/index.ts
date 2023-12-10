@@ -45,8 +45,8 @@ async function request<T>({
 
 export function ResourceClient<T = any>(
   schemaUrl: string,
-  errorHandler: (err: string) => void,
-  cacheProvider: ICacheProvider,
+  errorHandler: (err: string) => void = (err: string) => {},
+  cacheProvider?: ICacheProvider,
 ): IResourceClient<T> {
   const getSchema = request.bind<
     null,

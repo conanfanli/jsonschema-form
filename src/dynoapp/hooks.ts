@@ -1,8 +1,8 @@
 import React from "react";
-import { ConfigContext } from "../ConfigApp";
 import { TaggedItem, Schema, IResourceClient } from "../types";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryString } from "../common/hooks";
+import { ResourceClient } from "../clients";
 
 function onDeleteItem<T extends TaggedItem>(
   deleteRow: (row: T) => void,
@@ -48,64 +48,28 @@ function onSubmitItem<T extends TaggedItem>(
 export function useShit() {
   const [focusedRow, setFocusedRow] = React.useState<any>(null);
   const [items, setItems] = React.useState<any[]>([]);
-  const { queryObject } = useQueryString();
+  const { queryObject, queryString } = useQueryString();
 
   const { isPending, error, data } = useQuery({
     queryKey: [queryObject.schemaUrl, "items"],
     queryFn: async () => {
-      const res = await fetch(queryObject.schemaUrl + "/items");
+      const res = await fetch(queryObject.schemaUrl + "/items?" + queryString);
       const ret = await res.json();
       setItems(ret);
       return ret;
     },
-    /*
-      fetch("https://api.github.com/repos/TanStack/query").then((res) =>
-        res.json(),
-      ),
-    */
   });
 
-  /*
-  if (!queryObject.schemaUrl) {
-    return <div>Missing schema URL from query string < /div>;
-  }
-
-  if (isPending) return <div>Loading...</div>;
-
-  if (error) {
-    return <div>{ "An error has occurred: " + error.message } < /div>;
-  }
-    */
+  const { data: schema } = useQuery({
+    queryKey: [queryObject.schemaUrl],
+    queryFn: async () => {
+      const res = await fetch(queryObject.schemaUrl);
+      return await res.json();
+    },
+  });
 
   const [options] = React.useState<string[]>([]);
-  const { resourceClient, config } = React.useContext(ConfigContext);
-  const [schema, setSchema] = React.useState<Schema | null>(null);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (!resourceClient) {
-        return;
-      }
-
-      const [res] = await resourceClient.getSchema();
-      if (res) {
-        setSchema(res);
-      }
-
-      /*
-    const [items] = await resourceClient.getItems({
-      queryFilters: config?.itemsFilters || "",
-    });
-    if (items && items.length) {
-      setItems(items);
-    } else {
-      setItems([]);
-    }
-  */
-    };
-
-    fetchData();
-  }, [config?.schemaUrl, config?.itemsFilters, config?.name, resourceClient]);
+  const resourceClient = ResourceClient<any>(queryObject.schemaUrl);
 
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));
@@ -122,6 +86,8 @@ export function useShit() {
       : null,
     options,
     focusedRow,
+    isPending,
+    error,
     setFocusedRow,
   };
 }

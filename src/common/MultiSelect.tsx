@@ -31,7 +31,11 @@ export function MultiSelect(props: MultiSelectProps) {
   const [options, setOptions] = React.useState<string[]>(initialOptions);
 
   async function onOpen() {
-    if (!getOptions) return;
+    if (!getOptions) {
+      return;
+    }
+
+    setOptions(["loading..."]);
     const opts = await getOptions();
     if (opts) {
       setOptions(opts);

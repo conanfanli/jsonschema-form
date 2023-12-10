@@ -17,8 +17,17 @@ export function DynoApp() {
     onDeleteItem,
     options,
     items,
+    isPending,
+    error,
     onSubmitItem,
   } = useShit();
+
+  if (isPending) {
+    return <div>loading...</div>;
+  }
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>;
+  }
 
   return schema && onDeleteItem && onSubmitItem ? (
     <div>
