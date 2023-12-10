@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { LocalStorageViewStore, ViewStore } from "./viewStore";
+import { useQueryString } from "../common/hooks";
 
 interface SearchParamFormProps {
   viewStore?: ViewStore;
@@ -23,32 +24,28 @@ interface SearchParamFormProps {
  */
 export function SearchParamForm(props: SearchParamFormProps) {
   const { viewStore = LocalStorageViewStore(), excluded = [] } = props;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { queryObject, setQueryObject, queryString } = useQueryString();
 
-  const params = Object.fromEntries(searchParams);
-  function setParams(p: { [key: string]: string }) {
-    setSearchParams(new URLSearchParams(p));
-  }
   return (
     <div>
-      {decodeURIComponent(searchParams.toString())}
+      {decodeURIComponent(queryString)}
       <ViewNameSelect
-        initialViewName={params.viewName}
+        initialViewName={queryObject.viewName}
         onSelect={(viewName) => {
           if (viewName) {
             const savedQueryString = viewStore.getView(viewName);
             if (savedQueryString) {
-              setParams(
+              setQueryObject(
                 Object.fromEntries(new URLSearchParams(savedQueryString)),
               );
             } else {
-              setParams({ ...params, viewName });
+              setQueryObject({ ...queryObject, viewName });
             }
           }
         }}
         options={viewStore.listViews()}
       />
-      {Object.keys(params)
+      {Object.keys(queryObject)
         .filter((k) => !excluded.includes(k) && k !== "viewName")
         .map((key) => (
           <Grid container key={key}>
@@ -60,7 +57,7 @@ export function SearchParamForm(props: SearchParamFormProps) {
                 disabled
                 value={key}
                 onChange={(e) => {
-                  setParams({ ...params, [key]: e.target.value });
+                  setQueryObject({ ...queryObject, [key]: e.target.value });
                 }}
               />
             </Grid>
@@ -70,9 +67,9 @@ export function SearchParamForm(props: SearchParamFormProps) {
                 fullWidth
                 key={"value"}
                 onChange={(e) => {
-                  setParams({ ...params, [key]: e.target.value });
+                  setQueryObject({ ...queryObject, [key]: e.target.value });
                 }}
-                value={params[key]}
+                value={queryObject[key]}
               />
             </Grid>
             <Grid item md={0.5}>
@@ -80,8 +77,8 @@ export function SearchParamForm(props: SearchParamFormProps) {
                 color="error"
                 key={key}
                 onClick={() => {
-                  const { [key]: removed, ...newParams } = params;
-                  setParams(newParams);
+                  const { [key]: removed, ...newParams } = queryObject;
+                  setQueryObject(newParams);
                 }}
               >
                 <DeleteIcon />
@@ -93,7 +90,7 @@ export function SearchParamForm(props: SearchParamFormProps) {
         variant="contained"
         color="secondary"
         onClick={() => {
-          setSearchParams(params);
+          setQueryObject(queryObject);
         }}
       >
         Go
@@ -103,8 +100,8 @@ export function SearchParamForm(props: SearchParamFormProps) {
         color="primary"
         onClick={() => {
           viewStore.saveView(
-            params.viewName,
-            new URLSearchParams(params).toString(),
+            queryObject.viewName,
+            new URLSearchParams(queryObject).toString(),
           );
         }}
       >
@@ -114,7 +111,7 @@ export function SearchParamForm(props: SearchParamFormProps) {
         variant="contained"
         color="primary"
         onClick={() => {
-          viewStore.deleteView(params.viewName);
+          viewStore.deleteView(queryObject.viewName);
         }}
       >
         Delete
