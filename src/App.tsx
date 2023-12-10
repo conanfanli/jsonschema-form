@@ -6,7 +6,7 @@ import {
   useParams,
 } from "react-router-dom";
 import "./App.css";
-import { DynoApp } from "./DynoApp/DynoApp";
+import { DynoApp } from "./DynoApp";
 import { SavedViewRedirect } from "./SavedViewsApp/ViewRedirect";
 import { SearchParamForm } from "./SavedViewsApp/SearchParamForm";
 import { ConfigProvider } from "./ConfigApp";
