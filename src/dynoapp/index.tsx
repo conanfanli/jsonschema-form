@@ -1,5 +1,5 @@
 import React from "react";
-import { SearchParamForm } from "../SavedViewsApp/SearchParamForm";
+import { SearchParamForm } from "../savedviewapp/SearchParamForm";
 import { ModalContainer } from "../common/ModalContainer";
 import { DynoList } from "./DynoList";
 import { DynoForm } from "./DynoForm";
