@@ -49,9 +49,10 @@ export function useShit() {
   const [focusedRow, setFocusedRow] = React.useState<any>(null);
   const [items, setItems] = React.useState<any[]>([]);
   const { queryObject, queryString } = useQueryString();
+  console.log(222, queryString);
 
-  const { isPending, error, data } = useQuery({
-    queryKey: [queryObject.schemaUrl, "items"],
+  const { isLoading, error, data } = useQuery({
+    queryKey: [queryObject.schemaUrl, "items", queryString],
     queryFn: async () => {
       const res = await fetch(queryObject.schemaUrl + "/items?" + queryString);
       const ret = await res.json();
@@ -86,7 +87,7 @@ export function useShit() {
       : null,
     options,
     focusedRow,
-    isPending,
+    isLoading,
     error,
     setFocusedRow,
   };

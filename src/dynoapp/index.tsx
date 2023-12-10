@@ -17,12 +17,12 @@ export function DynoApp() {
     onDeleteItem,
     options,
     items,
-    isPending,
+    isLoading,
     error,
     onSubmitItem,
   } = useShit();
 
-  if (isPending) {
+  if (isLoading) {
     return <div>loading...</div>;
   }
   if (error) {

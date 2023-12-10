@@ -5,6 +5,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { useQuery } from "@tanstack/react-query";
 
 const filter = createFilterOptions<string>();
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -28,9 +29,31 @@ export function MultiSelect(props: MultiSelectProps) {
     allowNewOption,
     label,
   } = props;
-  const [options, setOptions] = React.useState<string[]>(initialOptions);
+  // const [options, setOptions] = React.useState<string[]>(initialOptions);
+
+  const { refetch, isLoading, data, error } = useQuery({
+    queryKey: ["options"],
+    queryFn: async () => {
+      if (getOptions) {
+        const result = await getOptions();
+        if (result) {
+          // setOptions(result);
+          return result;
+        }
+      }
+      return [];
+    },
+    // enabled: false,
+  });
+
+  if (isLoading || !data) {
+    // setOptions(["loading ..."]);
+    return <div>loading ..</div>;
+  }
 
   async function onOpen() {
+    await refetch();
+    /*
     if (!getOptions) {
       return;
     }
@@ -40,15 +63,16 @@ export function MultiSelect(props: MultiSelectProps) {
     if (opts) {
       setOptions(opts);
     }
+      */
   }
 
-  const opts = [...options];
+  const opts = [...data];
   opts.sort();
 
+  // onOpen={onOpen}
   return (
     <Autocomplete
       fullWidth
-      onOpen={onOpen}
       multiple
       onChange={(_, newValue: string[]) => {
         onSelectionsChange(
