@@ -57,14 +57,14 @@ export function useShit() {
         return;
       }
 
-      const [items] = await resourceClient.getItems({
-        queryFilters: config?.itemsFilters || "",
-      });
       const [res] = await resourceClient.getSchema();
       if (res) {
         setSchema(res);
       }
 
+      const [items] = await resourceClient.getItems({
+        queryFilters: config?.itemsFilters || "",
+      });
       if (items && items.length) {
         setItems(items);
       } else {

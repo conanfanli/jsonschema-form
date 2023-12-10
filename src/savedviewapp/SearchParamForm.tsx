@@ -29,7 +29,6 @@ export function SearchParamForm(props: SearchParamFormProps) {
   function setParams(p: { [key: string]: string }) {
     setSearchParams(new URLSearchParams(p));
   }
-  // const [params, setParams] = React.useState();
   return (
     <div>
       {decodeURIComponent(searchParams.toString())}
@@ -42,6 +41,8 @@ export function SearchParamForm(props: SearchParamFormProps) {
               setParams(
                 Object.fromEntries(new URLSearchParams(savedQueryString)),
               );
+            } else {
+              setParams({ ...params, viewName });
             }
           }
         }}
@@ -51,17 +52,27 @@ export function SearchParamForm(props: SearchParamFormProps) {
         .filter((k) => !excluded.includes(k) && k !== "viewName")
         .map((key) => (
           <Grid container key={key}>
-            <Grid item md={11.5}>
+            <Grid item md={1}>
               <TextField
                 size="small"
                 fullWidth
-                key={key}
+                key={"name"}
+                disabled
+                value={key}
                 onChange={(e) => {
-                  console.log(e.target.value);
+                  setParams({ ...params, [key]: e.target.value });
+                }}
+              />
+            </Grid>
+            <Grid item md={10.5}>
+              <TextField
+                size="small"
+                fullWidth
+                key={"value"}
+                onChange={(e) => {
                   setParams({ ...params, [key]: e.target.value });
                 }}
                 value={params[key]}
-                helperText={key}
               />
             </Grid>
             <Grid item md={0.5}>
