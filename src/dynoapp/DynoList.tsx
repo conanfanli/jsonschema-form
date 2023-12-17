@@ -56,8 +56,6 @@ export function DynoList({ schema, setFocusedRow }: DynoTableProps) {
 
 export interface DynoTableProps {
   schema: Schema;
-  // items: TaggedItem[];
-  // setFocusedRow: (id: string) => void;
   setFocusedRow: (i: TaggedItem | null) => void;
   container?: string;
 }

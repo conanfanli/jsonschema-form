@@ -21,55 +21,33 @@ interface MultiSelectProps {
 }
 
 export function MultiSelect(props: MultiSelectProps) {
-  const {
-    getOptions,
-    initialOptions = [],
-    selected,
-    onSelectionsChange,
-    allowNewOption,
-    label,
-  } = props;
-  // const [options, setOptions] = React.useState<string[]>(initialOptions);
+  const { getOptions, selected, onSelectionsChange, allowNewOption, label } =
+    props;
 
-  const { refetch, isLoading, data, error } = useQuery({
+  const { isLoading, data, error } = useQuery({
     queryKey: ["options"],
     queryFn: async () => {
       if (getOptions) {
         const result = await getOptions();
         if (result) {
-          // setOptions(result);
           return result;
         }
       }
       return [];
     },
-    // enabled: false,
   });
 
   if (isLoading || !data) {
-    // setOptions(["loading ..."]);
     return <div>loading ..</div>;
   }
 
-  async function onOpen() {
-    await refetch();
-    /*
-    if (!getOptions) {
-      return;
-    }
-
-    setOptions(["loading..."]);
-    const opts = await getOptions();
-    if (opts) {
-      setOptions(opts);
-    }
-      */
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>;
   }
 
   const opts = [...data];
   opts.sort();
 
-  // onOpen={onOpen}
   return (
     <Autocomplete
       fullWidth

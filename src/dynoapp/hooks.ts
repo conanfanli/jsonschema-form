@@ -1,9 +1,8 @@
 import React from "react";
-import { TaggedItem, IResourceClient } from "../types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQueryString } from "../common/hooks";
-import { ResourceClient } from "../clients";
 
+/*
 function onDeleteItem<T extends TaggedItem>(
   deleteRow: (row: T) => void,
   setFocusedRow: (i: T | null) => void,
@@ -44,6 +43,7 @@ function onSubmitItem<T extends TaggedItem>(
     setFocusedRow(null);
   };
 }
+*/
 
 export function usePutItem() {
   const queryClient = useQueryClient();
@@ -99,8 +99,7 @@ export function useItems() {
 }
 
 export function useShit() {
-  const [focusedRow, setFocusedRow] = React.useState<any>(null);
-  const { queryObject, queryString } = useQueryString();
+  const { queryObject } = useQueryString();
 
   const {
     error,
@@ -115,9 +114,9 @@ export function useShit() {
   });
 
   const [options] = React.useState<string[]>([]);
+  /*
   const resourceClient = ResourceClient<any>(queryObject.schemaUrl);
 
-  /*
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));
   }
@@ -125,19 +124,8 @@ export function useShit() {
 
   return {
     schema,
-    /*
-    items,
-    onSubmitItem: resourceClient
-      ? onSubmitItem(items, setItems, setFocusedRow, resourceClient)
-      : null,
-    onDeleteItem: resourceClient
-      ? onDeleteItem(deleteRow, setFocusedRow, resourceClient)
-      : null,
-    */
     options,
-    focusedRow,
     isLoadingSchema,
     error,
-    setFocusedRow,
   };
 }

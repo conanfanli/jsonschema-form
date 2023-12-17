@@ -8,7 +8,6 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import React from "react";
-import { useSearchParams } from "react-router-dom";
 import { LocalStorageViewStore, ViewStore } from "./viewStore";
 import { useQueryString } from "../common/hooks";
 

@@ -12,46 +12,14 @@ import { Box } from "@mui/system";
 import { IFieldInfo, Schema } from "../types";
 import { getFieldInfosFromSchema } from "./utils";
 import { MultiSelect } from "../common/MultiSelect";
-import { useMutation } from "@tanstack/react-query";
 import { usePutItem } from "./hooks";
-
-/*
-function onSubmitItem<T extends TaggedItem>(
-  items: T[],
-  setItems: (items: T[]) => void,
-  setFocusedRow: (i: T | null) => void,
-  client: IResourceClient,
-) {
-  function createOrUpdateItem(newRow: any) {
-    let existing = false;
-    const newItems = items.map((item) => {
-      if (item.id === newRow.id) {
-        existing = true;
-        return newRow;
-      }
-      return item;
-    });
-    if (existing) {
-      setItems(newItems);
-    } else {
-      setItems([newRow, ...items]);
-    }
-  }
-
-  return async (data: T) => {
-    const [newItem] = await client.putItem(data);
-    createOrUpdateItem(newItem);
-    setFocusedRow(null);
-  };
-}
-  */
 
 interface EditFormProps {
   schema: Schema;
   row: any;
   noButtons?: boolean;
   onChange: (v: any) => void;
-  onSubmitItem?: (v: any) => void;
+  closeModal?: () => void;
   onDeleteItem: (v: any) => void;
   options: string[];
 }
@@ -61,7 +29,7 @@ interface EditFieldProps {
   value: any;
   options: string[];
   isEditMode: boolean;
-  onChange: (any) => void;
+  onChange: (a: any) => void;
   onDeleteItem: (v: any) => void;
 }
 
@@ -69,7 +37,7 @@ export function DynoForm({
   noButtons = false,
   onChange,
   onDeleteItem,
-  onSubmitItem = () => {},
+  closeModal = () => {},
   row,
   options,
   schema,
@@ -104,6 +72,7 @@ export function DynoForm({
           <Button
             onClick={async () => {
               mutation.mutate({ ...row });
+              closeModal();
             }}
             variant="contained"
             color="primary"
