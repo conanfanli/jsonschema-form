@@ -42,7 +42,7 @@ export interface AppConfig {
   name: string;
   schemaUrl?: string;
   itemsUrl?: string;
-  itemsFilters?: string; // This is a json string like {"label": "abc"}
+  filters?: string; // This is a json string like {"label": "abc"}
 }
 
 export interface TaggedItem {

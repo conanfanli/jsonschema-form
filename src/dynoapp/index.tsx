@@ -9,18 +9,18 @@ import { getFieldInfosFromSchema } from "./utils";
 
 export function DynoApp() {
   console.log("render DynoApp");
+  const [focusedRow, setFocusedRow] = React.useState<any>(null);
 
-  const {
-    schema,
-    focusedRow,
-    setFocusedRow,
-    onDeleteItem,
-    options,
-    items,
-    onSubmitItem,
-  } = useShit();
+  const { schema, options, isLoadingSchema, error } = useShit();
 
-  return schema && onDeleteItem && onSubmitItem ? (
+  if (isLoadingSchema) {
+    return <div>loading schema...</div>;
+  }
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>;
+  }
+
+  return schema ? (
     <div>
       <ModalContainer
         open={!!focusedRow}
@@ -33,19 +33,15 @@ export function DynoApp() {
           onChange={setFocusedRow}
           schema={schema}
           row={focusedRow}
-          onSubmitItem={onSubmitItem}
-          onDeleteItem={onDeleteItem}
+          closeModal={() => {
+            setFocusedRow(null);
+          }}
+          onDeleteItem={() => {}}
         />
       </ModalContainer>
       <SearchParamForm />
       <FilterForm fields={getFieldInfosFromSchema(schema)} />
-      <DynoList
-        items={items}
-        selectForEdit={(id: string) =>
-          setFocusedRow(items.filter((item) => item.id === id)[0])
-        }
-        schema={schema}
-      />
+      <DynoList setFocusedRow={setFocusedRow} schema={schema} />
     </div>
   ) : null;
 }

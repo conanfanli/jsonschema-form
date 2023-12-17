@@ -1,7 +1,8 @@
 import React from "react";
-import { ConfigContext } from "../ConfigApp";
-import { TaggedItem, Schema, IResourceClient } from "../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryString } from "../common/hooks";
 
+/*
 function onDeleteItem<T extends TaggedItem>(
   deleteRow: (row: T) => void,
   setFocusedRow: (i: T | null) => void,
@@ -42,54 +43,89 @@ function onSubmitItem<T extends TaggedItem>(
     setFocusedRow(null);
   };
 }
+*/
+
+export function usePutItem() {
+  const queryClient = useQueryClient();
+  const { queryObject } = useQueryString();
+  const mutation = useMutation({
+    mutationFn: async (newItem) => {
+      const res = await fetch(queryObject.schemaUrl + "/items?", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
+      const ret = await res.json();
+      return ret;
+    },
+    onSuccess: (data) => {
+      if (!data.errorMessage) {
+        const oldItems = queryClient.getQueryData<any[]>([
+          queryObject.schemaUrl,
+          "items",
+        ]);
+        if (oldItems) {
+          queryClient.setQueryData(
+            [queryObject.schemaUrl, "items"],
+            [
+              ...oldItems.map((item: any) => {
+                if (item.id === data.id) {
+                  return data;
+                }
+                return item;
+              }),
+            ],
+          );
+        }
+      }
+    },
+  });
+  return { mutation };
+}
+export function useItems() {
+  const { queryObject, queryString } = useQueryString();
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: [queryObject.schemaUrl, "items"],
+    retryOnMount: false,
+    queryFn: async () => {
+      const res = await fetch(queryObject.schemaUrl + "/items?" + queryString);
+      const ret = await res.json();
+      // setItems(ret);
+      return ret;
+    },
+  });
+  return { data, error, isLoading };
+}
 
 export function useShit() {
-  const [focusedRow, setFocusedRow] = React.useState<any>(null);
-  const [items, setItems] = React.useState<any[]>([]);
+  const { queryObject } = useQueryString();
+
+  const {
+    error,
+    isLoading: isLoadingSchema,
+    data: schema,
+  } = useQuery({
+    queryKey: [queryObject.schemaUrl],
+    queryFn: async () => {
+      const res = await fetch(queryObject.schemaUrl);
+      return await res.json();
+    },
+  });
 
   const [options] = React.useState<string[]>([]);
-  const { resourceClient, config } = React.useContext(ConfigContext);
-  const [schema, setSchema] = React.useState<Schema | null>(null);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (!resourceClient) {
-        return;
-      }
-
-      const [res] = await resourceClient.getSchema();
-      if (res) {
-        setSchema(res);
-      }
-
-      const [items] = await resourceClient.getItems({
-        queryFilters: config?.itemsFilters || "",
-      });
-      if (items && items.length) {
-        setItems(items);
-      } else {
-        setItems([]);
-      }
-    };
-
-    fetchData();
-  }, [config?.schemaUrl, config?.itemsFilters, config?.name, resourceClient]);
+  /*
+  const resourceClient = ResourceClient<any>(queryObject.schemaUrl);
 
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));
   }
+  */
 
   return {
     schema,
-    items,
-    onSubmitItem: resourceClient
-      ? onSubmitItem(items, setItems, setFocusedRow, resourceClient)
-      : null,
-    onDeleteItem: resourceClient
-      ? onDeleteItem(deleteRow, setFocusedRow, resourceClient)
-      : null,
     options,
-    focusedRow,
-    setFocusedRow,
+    isLoadingSchema,
+    error,
   };
 }

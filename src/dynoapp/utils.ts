@@ -1,4 +1,5 @@
 import { FieldType, IFieldInfo, Property, Schema } from "../types";
+
 function getAutoCompleteOptions(prop: Property) {
   if (!prop.auto_complete) {
     throw new Error(`missing auto_complete for ${prop.type}`);

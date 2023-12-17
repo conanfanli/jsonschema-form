@@ -12,13 +12,14 @@ import { Box } from "@mui/system";
 import { IFieldInfo, Schema } from "../types";
 import { getFieldInfosFromSchema } from "./utils";
 import { MultiSelect } from "../common/MultiSelect";
+import { usePutItem } from "./hooks";
 
 interface EditFormProps {
   schema: Schema;
   row: any;
   noButtons?: boolean;
   onChange: (v: any) => void;
-  onSubmitItem?: (v: any) => void;
+  closeModal?: () => void;
   onDeleteItem: (v: any) => void;
   options: string[];
 }
@@ -28,7 +29,7 @@ interface EditFieldProps {
   value: any;
   options: string[];
   isEditMode: boolean;
-  onChange: (any) => void;
+  onChange: (a: any) => void;
   onDeleteItem: (v: any) => void;
 }
 
@@ -36,13 +37,14 @@ export function DynoForm({
   noButtons = false,
   onChange,
   onDeleteItem,
-  onSubmitItem = () => { },
+  closeModal = () => {},
   row,
   options,
   schema,
 }: EditFormProps) {
   const isEditMode = !!row && !!row.id;
   const editable = getFieldInfosFromSchema(schema).filter((c) => !c.readOnly);
+  const { mutation } = usePutItem();
 
   return (
     <Box>
@@ -69,7 +71,8 @@ export function DynoForm({
         <>
           <Button
             onClick={async () => {
-              await onSubmitItem(row);
+              mutation.mutate({ ...row });
+              closeModal();
             }}
             variant="contained"
             color="primary"
@@ -98,7 +101,7 @@ function EditField({
   isEditMode,
   options,
   onChange,
-  onDeleteItem = () => { },
+  onDeleteItem = () => {},
 }: EditFieldProps) {
   let inputType = "text";
   const [open, setOpen] = React.useState(false);
