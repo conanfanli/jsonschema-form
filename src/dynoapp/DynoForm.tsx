@@ -12,6 +12,39 @@ import { Box } from "@mui/system";
 import { IFieldInfo, Schema } from "../types";
 import { getFieldInfosFromSchema } from "./utils";
 import { MultiSelect } from "../common/MultiSelect";
+import { useMutation } from "@tanstack/react-query";
+import { usePutItem } from "./hooks";
+
+/*
+function onSubmitItem<T extends TaggedItem>(
+  items: T[],
+  setItems: (items: T[]) => void,
+  setFocusedRow: (i: T | null) => void,
+  client: IResourceClient,
+) {
+  function createOrUpdateItem(newRow: any) {
+    let existing = false;
+    const newItems = items.map((item) => {
+      if (item.id === newRow.id) {
+        existing = true;
+        return newRow;
+      }
+      return item;
+    });
+    if (existing) {
+      setItems(newItems);
+    } else {
+      setItems([newRow, ...items]);
+    }
+  }
+
+  return async (data: T) => {
+    const [newItem] = await client.putItem(data);
+    createOrUpdateItem(newItem);
+    setFocusedRow(null);
+  };
+}
+  */
 
 interface EditFormProps {
   schema: Schema;
@@ -36,13 +69,14 @@ export function DynoForm({
   noButtons = false,
   onChange,
   onDeleteItem,
-  onSubmitItem = () => { },
+  onSubmitItem = () => {},
   row,
   options,
   schema,
 }: EditFormProps) {
   const isEditMode = !!row && !!row.id;
   const editable = getFieldInfosFromSchema(schema).filter((c) => !c.readOnly);
+  const { mutation } = usePutItem();
 
   return (
     <Box>
@@ -69,7 +103,7 @@ export function DynoForm({
         <>
           <Button
             onClick={async () => {
-              await onSubmitItem(row);
+              mutation.mutate({ ...row });
             }}
             variant="contained"
             color="primary"
@@ -98,7 +132,7 @@ function EditField({
   isEditMode,
   options,
   onChange,
-  onDeleteItem = () => { },
+  onDeleteItem = () => {},
 }: EditFieldProps) {
   let inputType = "text";
   const [open, setOpen] = React.useState(false);

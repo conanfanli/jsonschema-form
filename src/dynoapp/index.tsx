@@ -14,22 +14,22 @@ export function DynoApp() {
     schema,
     focusedRow,
     setFocusedRow,
-    onDeleteItem,
+    // onDeleteItem,
     options,
-    items,
-    isLoading,
+    // items,
+    isLoadingSchema,
     error,
-    onSubmitItem,
+    // onSubmitItem,
   } = useShit();
 
-  if (isLoading) {
-    return <div>loading...</div>;
+  if (isLoadingSchema) {
+    return <div>loading schema...</div>;
   }
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
   }
 
-  return schema && onDeleteItem && onSubmitItem ? (
+  return schema ? (
     <div>
       <ModalContainer
         open={!!focusedRow}
@@ -42,19 +42,13 @@ export function DynoApp() {
           onChange={setFocusedRow}
           schema={schema}
           row={focusedRow}
-          onSubmitItem={onSubmitItem}
-          onDeleteItem={onDeleteItem}
+          onSubmitItem={() => {}}
+          onDeleteItem={() => {}}
         />
       </ModalContainer>
       <SearchParamForm />
       <FilterForm fields={getFieldInfosFromSchema(schema)} />
-      <DynoList
-        items={items}
-        selectForEdit={(id: string) =>
-          setFocusedRow(items.filter((item) => item.id === id)[0])
-        }
-        schema={schema}
-      />
+      <DynoList setFocusedRow={setFocusedRow} schema={schema} />
     </div>
   ) : null;
 }

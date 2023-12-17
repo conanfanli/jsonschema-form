@@ -1,6 +1,6 @@
 import React from "react";
-import { TaggedItem, Schema, IResourceClient } from "../types";
-import { useQuery } from "@tanstack/react-query";
+import { TaggedItem, IResourceClient } from "../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQueryString } from "../common/hooks";
 import { ResourceClient } from "../clients";
 
@@ -45,23 +45,68 @@ function onSubmitItem<T extends TaggedItem>(
   };
 }
 
-export function useShit() {
-  const [focusedRow, setFocusedRow] = React.useState<any>(null);
-  const [items, setItems] = React.useState<any[]>([]);
+export function usePutItem() {
+  const queryClient = useQueryClient();
+  const { queryObject } = useQueryString();
+  const mutation = useMutation({
+    mutationFn: async (newItem) => {
+      const res = await fetch(queryObject.schemaUrl + "/items?", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
+      const ret = await res.json();
+      return ret;
+    },
+    onSuccess: (data) => {
+      if (!data.errorMessage) {
+        const oldItems = queryClient.getQueryData<any[]>([
+          queryObject.schemaUrl,
+          "items",
+        ]);
+        if (oldItems) {
+          queryClient.setQueryData(
+            [queryObject.schemaUrl, "items"],
+            [
+              ...oldItems.map((item: any) => {
+                if (item.id === data.id) {
+                  return data;
+                }
+                return item;
+              }),
+            ],
+          );
+        }
+      }
+    },
+  });
+  return { mutation };
+}
+export function useItems() {
   const { queryObject, queryString } = useQueryString();
-  console.log(222, queryString);
 
   const { isLoading, error, data } = useQuery({
-    queryKey: [queryObject.schemaUrl, "items", queryString],
+    queryKey: [queryObject.schemaUrl, "items"],
+    retryOnMount: false,
     queryFn: async () => {
       const res = await fetch(queryObject.schemaUrl + "/items?" + queryString);
       const ret = await res.json();
-      setItems(ret);
+      // setItems(ret);
       return ret;
     },
   });
+  return { data, error, isLoading };
+}
 
-  const { data: schema } = useQuery({
+export function useShit() {
+  const [focusedRow, setFocusedRow] = React.useState<any>(null);
+  const { queryObject, queryString } = useQueryString();
+
+  const {
+    error,
+    isLoading: isLoadingSchema,
+    data: schema,
+  } = useQuery({
     queryKey: [queryObject.schemaUrl],
     queryFn: async () => {
       const res = await fetch(queryObject.schemaUrl);
@@ -72,12 +117,15 @@ export function useShit() {
   const [options] = React.useState<string[]>([]);
   const resourceClient = ResourceClient<any>(queryObject.schemaUrl);
 
+  /*
   function deleteRow(row) {
     setItems(items.filter((item) => item.id !== row.id));
   }
+  */
 
   return {
     schema,
+    /*
     items,
     onSubmitItem: resourceClient
       ? onSubmitItem(items, setItems, setFocusedRow, resourceClient)
@@ -85,9 +133,10 @@ export function useShit() {
     onDeleteItem: resourceClient
       ? onDeleteItem(deleteRow, setFocusedRow, resourceClient)
       : null,
+    */
     options,
     focusedRow,
-    isLoading,
+    isLoadingSchema,
     error,
     setFocusedRow,
   };

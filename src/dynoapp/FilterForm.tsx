@@ -21,7 +21,7 @@ export function FilterForm({ fields }: { fields: IFieldInfo[] }) {
               onSelectionsChange={(selected) => {
                 const newParams = {
                   ...Object.fromEntries<string>(searchParams),
-                  itemsFilters: (f.query_params_on_filter || "").replace(
+                  filters: (f.query_params_on_filter || "").replace(
                     /\$value/i,
                     selected[0],
                   ),
