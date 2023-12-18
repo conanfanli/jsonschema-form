@@ -25,7 +25,7 @@ export function MultiSelect(props: MultiSelectProps) {
     props;
 
   const { isLoading, data, error } = useQuery({
-    queryKey: ["options"],
+    queryKey: ["options", label],
     queryFn: async () => {
       if (getOptions) {
         const result = await getOptions();

@@ -1,4 +1,3 @@
-import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQueryString } from "../common/hooks";
 
@@ -91,7 +90,6 @@ export function useItems() {
     queryFn: async () => {
       const res = await fetch(queryObject.schemaUrl + "/items?" + queryString);
       const ret = await res.json();
-      // setItems(ret);
       return ret;
     },
   });

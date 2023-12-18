@@ -36,10 +36,10 @@ export function DynoList({ schema, setFocusedRow }: DynoTableProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((row) => (
+            {items.map((row: any) => (
               <DynoRow
                 selectForEdit={(id: string) =>
-                  setFocusedRow(items.filter((item) => item.id === id)[0])
+                  setFocusedRow(items.filter((item: any) => item.id === id)[0])
                 }
                 key={row.id}
                 columns={columns}
