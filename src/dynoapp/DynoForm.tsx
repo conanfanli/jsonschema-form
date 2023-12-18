@@ -21,13 +21,11 @@ interface EditFormProps {
   onChange: (v: any) => void;
   closeModal?: () => void;
   onDeleteItem: (v: any) => void;
-  options: string[];
 }
 interface EditFieldProps {
   schema: Schema;
   fieldInfo: IFieldInfo;
   value: any;
-  options: string[];
   isEditMode: boolean;
   onChange: (a: any) => void;
   onDeleteItem: (v: any) => void;
@@ -39,7 +37,6 @@ export function DynoForm({
   onDeleteItem,
   closeModal = () => {},
   row,
-  options,
   schema,
 }: EditFormProps) {
   const isEditMode = !!row && !!row.id;
@@ -59,7 +56,6 @@ export function DynoForm({
             onDeleteItem={onDeleteItem}
             isEditMode={isEditMode}
             fieldInfo={col}
-            options={options}
             value={row ? row[col.name] : ""}
             onChange={(newValue) => {
               onChange({ ...row, [col.name]: newValue });
@@ -99,7 +95,6 @@ function EditField({
   fieldInfo,
   value,
   isEditMode,
-  options,
   onChange,
   onDeleteItem = () => {},
 }: EditFieldProps) {
@@ -127,7 +122,6 @@ function EditField({
             >
               <Box sx={{ ml: 4 }}>
                 <DynoForm
-                  options={options}
                   onDeleteItem={onDeleteItem}
                   onChange={onChange}
                   schema={schema}

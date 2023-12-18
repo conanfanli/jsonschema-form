@@ -98,7 +98,7 @@ export function useItems() {
   return { data, error, isLoading };
 }
 
-export function useShit() {
+export function useSchema() {
   const { queryObject } = useQueryString();
 
   const {
@@ -113,18 +113,8 @@ export function useShit() {
     },
   });
 
-  const [options] = React.useState<string[]>([]);
-  /*
-  const resourceClient = ResourceClient<any>(queryObject.schemaUrl);
-
-  function deleteRow(row) {
-    setItems(items.filter((item) => item.id !== row.id));
-  }
-  */
-
   return {
     schema,
-    options,
     isLoadingSchema,
     error,
   };

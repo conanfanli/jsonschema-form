@@ -3,7 +3,7 @@ import { SearchParamForm } from "../savedviewapp/SearchParamForm";
 import { ModalContainer } from "../common/ModalContainer";
 import { DynoList } from "./DynoList";
 import { DynoForm } from "./DynoForm";
-import { useShit } from "./hooks";
+import { useSchema } from "./hooks";
 import { FilterForm } from "./FilterForm";
 import { getFieldInfosFromSchema } from "./utils";
 
@@ -11,7 +11,7 @@ export function DynoApp() {
   console.log("render DynoApp");
   const [focusedRow, setFocusedRow] = React.useState<any>(null);
 
-  const { schema, options, isLoadingSchema, error } = useShit();
+  const { schema, isLoadingSchema, error } = useSchema();
 
   if (isLoadingSchema) {
     return <div>loading schema...</div>;
@@ -29,7 +29,6 @@ export function DynoApp() {
         onCloseModal={() => setFocusedRow(null)}
       >
         <DynoForm
-          options={options}
           onChange={setFocusedRow}
           schema={schema}
           row={focusedRow}
