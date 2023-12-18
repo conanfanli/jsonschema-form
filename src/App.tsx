@@ -71,6 +71,7 @@ const router = createBrowserRouter(
         { path: "/:viewName", element: <DynoApp /> },
         // { path: "/dyno/:viewName", element: <DynoApp /> },
         {
+          // when hitting /views/abac -> /abc?query=xxxx
           path: "/views/:viewName",
           element: (
             <SavedViewRedirect redirectTo="/" addViewNameToPath={true} />
